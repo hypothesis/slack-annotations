@@ -7,7 +7,7 @@ jobs:
     steps:
       - uses: actions/cache@v4
         with:
-          key: cache
+          key: cache-${{ github.run_number }}
           path: ~/.cache.json
           restore-keys: |
             cache-
