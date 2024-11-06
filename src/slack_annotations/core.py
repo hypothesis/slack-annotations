@@ -43,7 +43,7 @@ def notify(group=None, token=None, cache_path=None):
         try:
             quote = get_quote(annotation)
         except:
-            quote = "..."
+            quote = " "
 
         try:
             title = annotation["document"]["title"][0]
@@ -51,9 +51,9 @@ def notify(group=None, token=None, cache_path=None):
             title = None
 
         fields = [
-            {"type": "mrkdown", "text": "*Quote"},
+            {"type": "mrkdwn", "text": "*Quote"},
             {"type": "plain_text", "text": quote},
-            {"type": "mrkdown", "text": "*Annotation"},
+            {"type": "mrkdwn", "text": "*Annotation"},
             {"type": "plain_text", "text": annotation["text"]},
         ]
 
