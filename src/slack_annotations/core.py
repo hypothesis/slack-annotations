@@ -40,8 +40,11 @@ def notify(group=None, token=None, cache_path=None):
             }
         }
 
-    return json.dumps({
-        "blocks": [
-            format_annotation(annotation) for annotation in annotations
-        ]
-    })
+    if annotations:
+        return json.dumps({
+            "blocks": [
+                format_annotation(annotation) for annotation in annotations
+            ]
+        })
+
+    return ""
