@@ -10,19 +10,17 @@ def notify(group=None, token=None, cache_path=None):
         params["group"] = group
 
     if cache_path:
-        print(f"cache_path: {cache_path}")
         try:
             with open(cache_path, "r") as cache_file:
                 params["search_after"] = json.load(cache_file)["search_after"]
         except FileNotFoundError:
-            print("FileNotFoundError")
+            pass
 
     headers = {}
 
     if token:
         headers["Authorization"] = f"Bearer {token}"
 
-    print(params)
     annotations = (
         httpx.get("https://hypothes.is/api/search", params=params, headers=headers)
         .raise_for_status()
@@ -33,7 +31,6 @@ def notify(group=None, token=None, cache_path=None):
         return f"{annotation['user_info']['display_name']}: {annotation['text']}"
 
     if annotations and cache_path:
-        print("Writing cache file")
         with open(cache_path, "w") as cache_file:
             json.dump({"search_after": annotations[-1]["created"]}, cache_file)
 

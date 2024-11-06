@@ -1,4 +1,3 @@
-import os
 from argparse import ArgumentParser
 from importlib.metadata import version
 
@@ -19,4 +18,4 @@ def cli(argv=None):
 
     args = parser.parse_args(argv)
 
-    print(notify(args.group, args.token, os.path.abspath(args.cache_path)))
+    print(notify(args.group, args.token, args.cache_path))
