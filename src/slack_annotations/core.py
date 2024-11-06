@@ -52,9 +52,9 @@ def notify(group=None, token=None, cache_path=None):
 
         fields = [
             {"type": "mrkdwn", "text": "*Quote*"},
-            {"type": "plain_text", "text": quote},
             {"type": "mrkdwn", "text": "*Annotation*"},
-            {"type": "plain_text", "text": annotation["text"]},
+            {"type": "plain_text", "text": quote},
+            {"type": "plain_text", "text": annotation.get("text", "(None)")},
         ]
 
         if annotation["tags"]:
