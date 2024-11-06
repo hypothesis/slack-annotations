@@ -32,8 +32,12 @@ def notify(group=None, token=None, cache_path=None):
             json.dump({"search_after": annotations[-1]["created"]}, cache_file)
 
     def format_annotation(annotation):
-        return {
+        block = {
             "type": "section",
+            "text": {
+                "text": "Someone posted an annotation:",
+                "type": "mrkdwn"
+            },
             "fields": [
                 {
                     "type": "mrkdwn",
@@ -47,12 +51,19 @@ def notify(group=None, token=None, cache_path=None):
                     "type": "plain_text",
                     "text": f"*{annotation['text']}*"
                 },
+            ]
+        }
+
+        if annotation["tags"]:
+            block["fields"].append(
                 {
                     "type": "mrkdwn",
                     "text": ",".join(f"`{tag}`" for tag in annotation["tags"])
                 },
-            ]
-        }
+            )
+
+        return block
+
 
     if annotations:
         if len(annotations) == 1:
