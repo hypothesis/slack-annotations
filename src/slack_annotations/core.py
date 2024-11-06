@@ -21,6 +21,7 @@ def notify(group=None, token=None, cache_path=None):
     if token:
         headers["Authorization"] = f"Bearer {token}"
 
+    print(params)
     annotations = (
         httpx.get("https://hypothes.is/api/search", params=params, headers=headers)
         .raise_for_status()
