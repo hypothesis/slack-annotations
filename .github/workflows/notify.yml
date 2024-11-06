@@ -36,6 +36,7 @@ jobs:
         uses: slackapi/slack-github-action@v1.27.0
         with:
           channel-id: ${{ vars.SLACK_CHANNEL }}
+          text: New annotations were posted
           payload: ${{ env.SLACK_MESSAGE }}
         env:
           SLACK_MESSAGE: ${{ steps.slack_message.outputs.SLACK_MESSAGE }}
