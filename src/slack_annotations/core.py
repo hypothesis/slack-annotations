@@ -62,14 +62,6 @@ def notify(
             {"type": "plain_text", "text": annotation.get("text", "(None)")},
         ]
 
-        if annotation["tags"]:
-            fields.append(
-                {
-                    "type": "mrkdwn",
-                    "text": ",".join(f"`{tag}`" for tag in annotation["tags"]),
-                },
-            )
-
         display_name = annotation["user_info"]["display_name"]
         username = annotation["user"].split(":")[1].split("@")[0]
         uri = annotation["uri"]
