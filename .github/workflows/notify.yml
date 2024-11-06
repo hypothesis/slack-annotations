@@ -26,10 +26,7 @@ jobs:
         run: |
           {
             echo 'SLACK_MESSAGE<<EOF'
-            slack-annotations \
-              --group ${{ secrets.HYPOTHESIS_GROUP }} \
-              --token ${{ secrets.HYPOTHESIS_API_TOKEN }} \
-              --cache-path cache.json
+            slack-annotations --group ${{ secrets.HYPOTHESIS_GROUP }} --token ${{ secrets.HYPOTHESIS_API_TOKEN }} --cache-path cache.json
             echo EOF
           } >> "$GITHUB_OUTPUT"
       - name: Post to Slack
