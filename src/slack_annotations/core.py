@@ -74,7 +74,7 @@ def notify(group=None, token=None, cache_path=None):
         else:
             document_link = uri
 
-        summary = f"`{username}` ({display_name}) annotated {document_link} (<{annotation['links']['html']}|link to annotation>, <{annotation['links']['incontext']}|in-context link to annotation):"
+        summary = f"`{username}` ({display_name}) annotated {document_link} (<{annotation['links']['html']}|link to annotation>, <{annotation['links']['incontext']}|in-context link to annotation>):"
 
         return {
             "type": "section",
