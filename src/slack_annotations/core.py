@@ -36,6 +36,14 @@ def notify(group=None, token=None, cache_path=None):
         username = annotation["user"].split(":")[1].split("@")[0]
         uri = annotation["uri"]
 
+        def get_quote(annotation):
+            for target in annotation["target"]:
+                for selector in target.get("selector", []):
+                    if "exact" in selector:
+                        return selector["exact"]
+
+        quote = get_quote[annotation]
+
         try:
             title = annotation["document"]["title"][0]
         except:
@@ -46,23 +54,26 @@ def notify(group=None, token=None, cache_path=None):
         else:
             summary = (f"{display_name} (`{username}`) annotated {uri}:",)
 
-        block = {
-            "type": "section",
-            "text": {"type": "mrkdwn", "text": summary},
-            "fields": [
-                {"type": "plain_text", "text": f"*{annotation['text']}*"},
-            ],
-        }
+        fields = [
+            {"type": "plain_text", "text": f"*{annotation['text']}*"},
+        ]
+
+        if quote:
+            fields.append({"type": "plain_text", "text": quote})
 
         if annotation["tags"]:
-            block["fields"].append(
+            fields.append(
                 {
                     "type": "mrkdwn",
                     "text": ",".join(f"`{tag}`" for tag in annotation["tags"]),
                 },
             )
 
-        return block
+        return {
+            "type": "section",
+            "text": {"type": "mrkdwn", "text": summary},
+            "fields": fields,
+        }
 
     if annotations:
         if len(annotations) == 1:
