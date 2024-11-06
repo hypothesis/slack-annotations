@@ -55,11 +55,7 @@ def notify(group=None, token=None, cache_path=None):
             {"type": "plain_text", "text": annotation["text"]},
             {
                 "type": "mrkdwn",
-                "text": f"<{annotation['links']['html']}|Direct link to annotation>",
-            },
-            {
-                "type": "mrkdwn",
-                "text": f"<{annotation['links']['incontext']}|In context link to annotation>",
+                "text": f"(<{annotation['links']['html']}|Direct link to annotation>, <{annotation['links']['incontext']}|In context link to annotation>)",
             },
         ]
 
@@ -97,6 +93,18 @@ def notify(group=None, token=None, cache_path=None):
         for annotation in annotations:
             blocks.append(format_annotation(annotation))
             blocks.append({"type": "divider"})
+
+        blocks.append(
+            {
+                "type": "context",
+                "elements": [
+                    {
+                        "type": "mrkdwn",
+                        "text": "These annotations are posted to Slack by a <https://github.com/hypothesis/slack-annotations/|GitHub Actions workflow>",
+                    },
+                ],
+            }
+        )
 
         return json.dumps({"text": summary, "blocks": blocks})
 
