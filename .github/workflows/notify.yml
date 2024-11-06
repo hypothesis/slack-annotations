@@ -36,7 +36,7 @@ jobs:
         uses: slackapi/slack-github-action@v1.27.0
         with:
           channel-id: ${{ vars.SLACK_CHANNEL }}
-          slack-message: ${{ env.SLACK_MESSAGE }}
+          payload: ${{ env.SLACK_MESSAGE }}
         env:
           SLACK_MESSAGE: ${{ steps.slack_message.outputs.SLACK_MESSAGE }}
           SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
