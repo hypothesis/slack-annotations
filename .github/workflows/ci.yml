@@ -1,0 +1,99 @@
+name: CI
+on:
+  push:
+    paths-ignore:
+      - '.cookiecutter/*'
+      - '.github/dependabot.yml'
+      - 'bin/make_python'
+      - 'bin/make_template'
+      - 'docs/*'
+      - '**/.gitignore'
+      - 'LICENSE'
+      - '*.md'
+  workflow_dispatch:
+  workflow_call:
+  schedule:
+  - cron: '0 1 * * *'
+jobs:
+  Format:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Install Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.13'
+      - run: python -m pip install 'tox<4'
+      - run: tox -e checkformatting
+  Lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Install Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.13'
+      - run: python -m pip install 'tox<4'
+      - run: tox -e lint
+  Typecheck:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Install Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.13'
+      - run: python -m pip install 'tox<4'
+      - run: tox -e typecheck
+  Tests:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ['3.13', '3.12', '3.11', '3.10', '3.9', '3.8']
+    name: Unit tests with Python ${{ matrix.python-version }}
+    steps:
+      - uses: actions/checkout@v3
+      - name: Install Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python-version }}
+      - run: python -m pip install 'tox<4'
+      - run: tox -e tests
+        env:
+          COVERAGE_FILE: .coverage.${{ matrix.python-version }}
+      - name: Upload coverage file
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-python${{ matrix.python-version}}
+          path: .coverage.*
+          include-hidden-files: true
+  Coverage:
+    needs: tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Install Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.13'
+      - name: Download coverage files
+        uses: actions/download-artifact@v4
+        with:
+          pattern: coverage-python*
+          merge-multiple: true
+      - run: python -m pip install 'tox<4'
+      - run: tox -e coverage
+  Functests:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ['3.13', '3.12', '3.11', '3.10', '3.9', '3.8']
+    name: Functional tests with Python ${{ matrix.python-version }}
+    steps:
+      - uses: actions/checkout@v3
+      - name: Install Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python-version }}
+      - run: python -m pip install 'tox<4'
+      - run: tox -e functests
