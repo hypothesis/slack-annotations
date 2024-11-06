@@ -20,7 +20,7 @@ jobs:
         run: |
           {
             echo 'SLACK_MESSAGE<<EOF'
-            slack-annotations
+            slack-annotations --group ${{ secrets.GROUP }} --token ${{ secrets.TOKEN }}
             echo EOF
           } >> "$GITHUB_OUTPUT"
       - name: Post to Slack

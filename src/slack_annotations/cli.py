@@ -1,7 +1,7 @@
 from argparse import ArgumentParser
 from importlib.metadata import version
 
-from slack_annotations.core import hello_world
+from slack_annotations.core import notify
 
 
 def cli(argv=None):
@@ -12,7 +12,9 @@ def cli(argv=None):
         action="version",
         version=version("slack-annotations"),
     )
+    parser.add_argument("--group")
+    parser.add_argument("--token")
 
-    _args = parser.parse_args(argv)
+    args = parser.parse_args(argv)
 
-    print(hello_world())
+    print(notify(args.group, args.token))
