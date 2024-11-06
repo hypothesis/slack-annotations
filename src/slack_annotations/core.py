@@ -53,10 +53,10 @@ def notify(
             title = None
 
         fields = [
-            {"type": "mrkdwn", "text": "*Quote*"},
+            {"type": "mrkdwn", "text": "*Quote:*"},
             {
                 "type": "mrkdwn",
-                "text": f"*Annotation* (<{annotation['links']['incontext']}|in-context link>)",
+                "text": f"*Annotation* (<{annotation['links']['incontext']}|in-context link>):",
             },
             {"type": "plain_text", "text": quote},
             {"type": "plain_text", "text": annotation.get("text", "(None)")},
