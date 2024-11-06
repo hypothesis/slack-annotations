@@ -22,7 +22,6 @@ jobs:
         uses: actions/checkout@v4
       - name: Install slack-annotations
         run: python -m pipx install .
-      - run: cat /home/runner/work/slack-annotations/slack-annotations/cache.json
       - name: Check for annotations
         id: slack_message
         run: |
@@ -31,6 +30,8 @@ jobs:
             slack-annotations --cache-path $(pwd)/cache.json --group ${{ secrets.HYPOTHESIS_GROUP }} --token ${{ secrets.HYPOTHESIS_API_TOKEN }}
             echo EOF
           } >> "$GITHUB_OUTPUT"
+
+      - run: cat /home/runner/work/slack-annotations/slack-annotations/cache.json
       - name: Post to Slack
         uses: slackapi/slack-github-action@v1.27.0
         with:
