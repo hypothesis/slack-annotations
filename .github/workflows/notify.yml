@@ -22,7 +22,6 @@ jobs:
         uses: actions/checkout@v4
       - name: Install slack-annotations
         run: python -m pipx install .
-      - run: cat $(pwd)/cache.json
       - name: Check for annotations
         id: slack_message
         run: |
