@@ -10,11 +10,12 @@ def notify(group=None, token=None, cache_path=None):
         params["group"] = group
 
     if cache_path:
+        print("Did receive cache_path argument")
         try:
             with open(cache_path, "r") as cache_file:
                 params["search_after"] = json.load(cache_file)["search_after"]
         except FileNotFoundError:
-            pass
+            print("FileNotFoundError")
 
     headers = {}
 
