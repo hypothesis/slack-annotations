@@ -5,11 +5,10 @@ jobs:
   Alert:
     runs-on: ubuntu-latest
     steps:
-      - name: Cache the --cache-path file
-        uses: actions/cache@v4
+      - uses: actions/cache@v4
         with:
           key: cache-${{ github.run_number }}
-          path: cache.json
+          path: /home/runner/work/slack-annotations/slack-annotations/cache.json
           restore-keys: |
             cache-
       - name: Install Python
