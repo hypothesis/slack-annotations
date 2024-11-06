@@ -34,6 +34,7 @@ def notify(group=None, token=None, cache_path=None):
     def format_annotation(annotation):
         display_name = annotation["user_info"]["display_name"]
         username = annotation["user"].split(":")[1].split("@")[0]
+        uri = annotation["uri"]
 
         try:
             title = annotation["document"]["title"][0]
@@ -41,9 +42,9 @@ def notify(group=None, token=None, cache_path=None):
             title = None
 
         if title:
-            summary = (f'{display_name} (`{username}`) annotated {url} ("{title}"):',)
+            summary = (f'{display_name} (`{username}`) annotated {uri} ("{title}"):',)
         else:
-            summary = (f"{display_name} (`{username}`) annotated {url}:",)
+            summary = (f"{display_name} (`{username}`) annotated {uri}:",)
 
         block = {
             "type": "section",
