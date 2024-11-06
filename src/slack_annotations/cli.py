@@ -14,7 +14,8 @@ def cli(argv=None):
     )
     parser.add_argument("--group")
     parser.add_argument("--token")
+    parser.add_argument("--cache-path")
 
     args = parser.parse_args(argv)
 
-    print(notify(args.group, args.token))
+    print(notify(args.group, args.token, args.cache_path))
