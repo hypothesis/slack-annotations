@@ -1,7 +1,9 @@
 name: Notify
+concurrency:
+  group: notify
 on:
   schedule:
-    - cron: '*/3 * * * *'
+    - cron: '* * * * *'
   workflow_dispatch:
 jobs:
   Alert:
