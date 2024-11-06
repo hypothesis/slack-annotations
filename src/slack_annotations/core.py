@@ -35,7 +35,7 @@ def notify(group=None, token=None, cache_path=None):
         return {
             "type": "section",
             "text": {
-                "type": "mkrdwn",
+                "type": "mrkdwn",
                 "text": f"**{annotation['user_info']['display_name']}:** {annotation['text']}"
             }
         }
