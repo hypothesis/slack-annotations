@@ -27,11 +27,21 @@ def notify(group=None, token=None, cache_path=None):
         .json()["rows"]
     )
 
-    def format_annotation(annotation):
-        return f"{annotation['user_info']['display_name']}: {annotation['text']}"
-
     if annotations and cache_path:
         with open(cache_path, "w") as cache_file:
             json.dump({"search_after": annotations[-1]["created"]}, cache_file)
 
-    return "\n".join(format_annotation(annotation) for annotation in annotations)
+    def format_annotation(annotation):
+        return {
+            "type": "section",
+            "text": {
+                "type": "mkrdwn",
+                "text": f"**{annotation['user_info']['display_name']}:** {annotation['text']}"
+            }
+        }
+
+    return json.dumps({
+        "blocks": [
+            format_annotation(annotation) for annotation in annotations
+        ]
+    })
