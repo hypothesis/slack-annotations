@@ -68,9 +68,9 @@ def notify(group=None, token=None, cache_path=None):
         uri = annotation["uri"]
 
         if title:
-            summary = f'{display_name} (`{username}`) annotated {uri} ("{title}"):'
+            summary = f'`{username}` ({display_name}) annotated <{url}|{title}>:'
         else:
-            summary = f"{display_name} (`{username}`) annotated {uri}:"
+            summary = f"`{username}` ({display_name}) annotated {uri}:"
 
         return {
             "type": "section",
