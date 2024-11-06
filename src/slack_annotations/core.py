@@ -51,12 +51,10 @@ def notify(group=None, token=None, cache_path=None):
             title = None
 
         fields = [
+            {"type": "mrkdown", "text": "*Quote"},
             {"type": "plain_text", "text": quote},
+            {"type": "mrkdown", "text": "*Annotation"},
             {"type": "plain_text", "text": annotation["text"]},
-            {
-                "type": "mrkdwn",
-                "text": f"(<{annotation['links']['html']}|Direct link to annotation>, <{annotation['links']['incontext']}|in-context link to annotation>)",
-            },
         ]
 
         if annotation["tags"]:
@@ -72,9 +70,11 @@ def notify(group=None, token=None, cache_path=None):
         uri = annotation["uri"]
 
         if title:
-            summary = f"`{username}` ({display_name}) annotated <{uri}|{title}>:"
+            document_link = f"<{uri}|{title}>"
         else:
-            summary = f"`{username}` ({display_name}) annotated {uri}:"
+            document_link = uri
+
+        summary = f"`{username}` ({display_name}) annotated {document_link} (<{annotation['links']['html']}|link to annotation>, <{annotation['links']['incontext']}|in-context link to annotation):"
 
         return {
             "type": "section",
