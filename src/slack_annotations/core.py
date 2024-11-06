@@ -34,10 +34,24 @@ def notify(group=None, token=None, cache_path=None):
     def format_annotation(annotation):
         return {
             "type": "section",
-            "text": {
-                "type": "mrkdwn",
-                "text": f"*{annotation['user_info']['display_name']}:* {annotation['text']}"
-            }
+            "fields": [
+                {
+                    "type": "mrkdwn",
+                    "text": f"*{annotation['user_info']['display_name']}* `{annotation['user']}`"
+                },
+                {
+                    "type": "mrkdwn",
+                    "text": f"*{annotation['document']['title']} {annotation['uri']}"
+                },
+                {
+                    "type": "plain_text",
+                    "text": f"*{annotation['text']}*"
+                },
+                {
+                    "type": "mrkdwn",
+                    "text": ",".join(f"`{tag}`" for tag in annotation["tags"])
+                },
+            ]
         }
 
     if annotations:
