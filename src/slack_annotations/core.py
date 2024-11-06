@@ -52,7 +52,7 @@ def notify(group=None, token=None, cache_path=None):
 
         fields = [
             {"type": "mrkdwn", "text": "*Quote*"},
-            {"type": "mrkdwn", "text": "*Annotation* (<{annotation['links']['html']}|link>, <{annotation['links']['incontext']}|in-context link>)"},
+            {"type": "mrkdwn", "text": f"*Annotation* (<{annotation['links']['html']}|link>, <{annotation['links']['incontext']}|in-context link>)"},
             {"type": "plain_text", "text": quote},
             {"type": "plain_text", "text": annotation.get("text", "(None)")},
         ]
