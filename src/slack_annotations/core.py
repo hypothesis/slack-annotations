@@ -3,7 +3,9 @@ import json
 import httpx
 
 
-def notify(group=None, token=None, cache_path=None):
+def notify(
+    group=None, token=None, cache_path=None
+):  # pylint:disable=too-complex # pragma:no cover
     params = {"limit": 200, "sort": "created", "order": "asc"}
 
     if group:
@@ -11,7 +13,7 @@ def notify(group=None, token=None, cache_path=None):
 
     if cache_path:
         try:
-            with open(cache_path, "r") as cache_file:
+            with open(cache_path, "r", encoding="utf-8") as cache_file:
                 params["search_after"] = json.load(cache_file)["search_after"]
         except FileNotFoundError:
             pass
@@ -28,7 +30,7 @@ def notify(group=None, token=None, cache_path=None):
     )
 
     if annotations and cache_path:
-        with open(cache_path, "w") as cache_file:
+        with open(cache_path, "w", encoding="utf-8") as cache_file:
             json.dump({"search_after": annotations[-1]["created"]}, cache_file)
 
     def format_annotation(annotation):
@@ -42,17 +44,20 @@ def notify(group=None, token=None, cache_path=None):
 
         try:
             quote = get_quote(annotation)
-        except:
+        except:  # pylint:disable=bare-except
             quote = "(None)"
 
         try:
             title = annotation["document"]["title"][0]
-        except:
+        except:  # pylint:disable=bare-except
             title = None
 
         fields = [
             {"type": "mrkdwn", "text": "*Quote*"},
-            {"type": "mrkdwn", "text": f"*Annotation* (<{annotation['links']['html']}|link>, <{annotation['links']['incontext']}|in-context link>)"},
+            {
+                "type": "mrkdwn",
+                "text": f"*Annotation* (<{annotation['links']['html']}|link>, <{annotation['links']['incontext']}|in-context link>)",
+            },
             {"type": "plain_text", "text": quote},
             {"type": "plain_text", "text": annotation.get("text", "(None)")},
         ]

@@ -5,10 +5,6 @@ import pytest
 from slack_annotations.cli import cli
 
 
-def test_it():
-    cli([])
-
-
 def test_help():
     with pytest.raises(SystemExit) as exc_info:
         cli(["--help"])

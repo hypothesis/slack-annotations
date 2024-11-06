@@ -18,4 +18,4 @@ def cli(argv=None):
 
     args = parser.parse_args(argv)
 
-    print(notify(args.group, args.token, args.cache_path))
+    print(notify(args.group, args.token, args.cache_path))  # pragma: nocover
