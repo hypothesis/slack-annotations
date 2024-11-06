@@ -55,7 +55,7 @@ def notify(group=None, token=None, cache_path=None):
             summary = (f"{display_name} (`{username}`) annotated {uri}:",)
 
         fields = [
-            {"type": "plain_text", "text": f"*{annotation['text']}*"},
+            {"type": "plain_text", "text": annotation["text"]}
         ]
 
         if quote:
