@@ -52,7 +52,7 @@ def notify(group=None, token=None, cache_path=None):
 
         fields = [
             {"type": "mrkdwn", "text": "*Quote*"},
-            {"type": "mrkdwn", "text": "*Annotation*"},
+            {"type": "mrkdwn", "text": "*Annotation* (<{annotation['links']['html']}|link>, <{annotation['links']['incontext']}|in-context link>)"},
             {"type": "plain_text", "text": quote},
             {"type": "plain_text", "text": annotation.get("text", "(None)")},
         ]
@@ -74,7 +74,7 @@ def notify(group=None, token=None, cache_path=None):
         else:
             document_link = uri
 
-        summary = f"`{username}` ({display_name}) annotated {document_link} (<{annotation['links']['html']}|link to annotation>, <{annotation['links']['incontext']}|in-context link to annotation>):"
+        summary = f"`{username}` ({display_name}) annotated {document_link}:"
 
         return {
             "type": "section",
