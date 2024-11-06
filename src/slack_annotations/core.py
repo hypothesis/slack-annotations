@@ -54,11 +54,11 @@ def notify(group=None, token=None, cache_path=None):
             {"type": "plain_text", "text": quote},
             {"type": "plain_text", "text": annotation["text"]},
             {
-                "type": "mrkdown",
+                "type": "mrkdwn",
                 "text": f"<{annotation['links']['html']}|Direct link to annotation>",
             },
             {
-                "type": "mrkdown",
+                "type": "mrkdwn",
                 "text": f"<{annotation['links']['incontext']}|In context link to annotation>",
             },
         ]
