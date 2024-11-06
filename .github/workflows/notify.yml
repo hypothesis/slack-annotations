@@ -8,8 +8,10 @@ jobs:
       - name: Cache the --cache-path file
         uses: actions/cache@v4
         with:
-          key: --cache-path
+          key: cache-${{ github.run_number }}
           path: cache.json
+          restore-keys: |
+            cache-
       - run: cat cache.json
       - name: Install Python
         uses: actions/setup-python@v4
