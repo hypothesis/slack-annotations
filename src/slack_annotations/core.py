@@ -55,7 +55,13 @@ def notify(group=None, token=None, cache_path=None):
         }
 
     if annotations:
+        if len(annotations) == 1:
+            summary = "A new annotation was posted"
+        else:
+            summary = f"{len(annotations)} new annotations were psoted"
+
         return json.dumps({
+            "text": summary,
             "blocks": [
                 format_annotation(annotation) for annotation in annotations
             ]
