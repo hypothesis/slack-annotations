@@ -53,6 +53,9 @@ def notify(group=None, token=None, cache_path=None):
         fields = [
             {"type": "plain_text", "text": quote},
             {"type": "plain_text", "text": annotation["text"]}
+            {"type": "mrkdown", "text": f"<{annotation['links']['html']}|Direct link to annotation>"},
+            {"type": "mrkdown", "text": f"<{annotation['links']['incontext']}|In context link to annotation>"},
+
         ]
 
         if annotation["tags"]:
