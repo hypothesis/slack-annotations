@@ -8,7 +8,7 @@ jobs:
       - uses: actions/cache@v4
         with:
           key: cache-${{ github.run_number }}
-          path: /home/runner/work/slack-annotations/slack-annotations/cache.json
+          path: cache.json
           restore-keys: |
             cache-
       - name: Install Python
@@ -26,11 +26,9 @@ jobs:
         run: |
           {
             echo 'SLACK_MESSAGE<<EOF'
-            slack-annotations --cache-path $(pwd)/cache.json --group ${{ secrets.HYPOTHESIS_GROUP }} --token ${{ secrets.HYPOTHESIS_API_TOKEN }}
+            slack-annotations --cache-path cache.json --group ${{ secrets.HYPOTHESIS_GROUP }} --token ${{ secrets.HYPOTHESIS_API_TOKEN }}
             echo EOF
           } >> "$GITHUB_OUTPUT"
-
-      - run: cat /home/runner/work/slack-annotations/slack-annotations/cache.json
       - name: Post to Slack
         uses: slackapi/slack-github-action@v1.27.0
         with:
