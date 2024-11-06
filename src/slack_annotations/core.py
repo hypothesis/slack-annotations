@@ -32,34 +32,28 @@ def notify(group=None, token=None, cache_path=None):
             json.dump({"search_after": annotations[-1]["created"]}, cache_file)
 
     def format_annotation(annotation):
-        display_name = annotation["user_info"]["display_name"]
-        username = annotation["user"].split(":")[1].split("@")[0]
-        uri = annotation["uri"]
-
         def get_quote(annotation):
             for target in annotation["target"]:
-                for selector in target.get("selector", []):
+                for selector in target["selector"]:
                     if "exact" in selector:
                         return selector["exact"]
 
-        quote = get_quote[annotation]
+            raise ValueError()
+
+        try:
+            quote = get_quote(annotation)
+        except:
+            quote = "..."
 
         try:
             title = annotation["document"]["title"][0]
         except:
             title = None
 
-        if title:
-            summary = (f'{display_name} (`{username}`) annotated {uri} ("{title}"):',)
-        else:
-            summary = (f"{display_name} (`{username}`) annotated {uri}:",)
-
         fields = [
+            {"type": "plain_text", "text": quote},
             {"type": "plain_text", "text": annotation["text"]}
         ]
-
-        if quote:
-            fields.append({"type": "plain_text", "text": quote})
 
         if annotation["tags"]:
             fields.append(
@@ -68,6 +62,15 @@ def notify(group=None, token=None, cache_path=None):
                     "text": ",".join(f"`{tag}`" for tag in annotation["tags"]),
                 },
             )
+
+        display_name = annotation["user_info"]["display_name"]
+        username = annotation["user"].split(":")[1].split("@")[0]
+        uri = annotation["uri"]
+
+        if title:
+            summary = (f'{display_name} (`{username}`) annotated {uri} ("{title}"):',)
+        else:
+            summary = (f"{display_name} (`{username}`) annotated {uri}:",)
 
         return {
             "type": "section",
