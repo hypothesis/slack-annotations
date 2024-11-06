@@ -32,18 +32,23 @@ def notify(group=None, token=None, cache_path=None):
             json.dump({"search_after": annotations[-1]["created"]}, cache_file)
 
     def format_annotation(annotation):
+        display_name = annotation["user_info"]["display_name"]
+        username = annotation["user"].split(":")[1].split("@")[0]
+
+        try:
+            title = annotation["document"]["title"][0]
+        except:
+            title = None
+
+        if title:
+            summary = (f'{display_name} (`{username}`) annotated {url} ("{title}"):',)
+        else:
+            summary = (f"{display_name} (`{username}`) annotated {url}:",)
+
         block = {
             "type": "section",
-            "text": {"text": "Someone posted an annotation:", "type": "mrkdwn"},
+            "text": {"type": "mrkdwn", "text": summary},
             "fields": [
-                {
-                    "type": "mrkdwn",
-                    "text": f"*{annotation['user_info']['display_name']}* `{annotation['user']}`",
-                },
-                {
-                    "type": "mrkdwn",
-                    "text": f"*{annotation['document']['title']} {annotation['uri']}",
-                },
                 {"type": "plain_text", "text": f"*{annotation['text']}*"},
             ],
         }
