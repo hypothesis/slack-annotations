@@ -33,6 +33,7 @@ def notify(group=None, token=None, cache_path=None):
         return f"{annotation['user_info']['display_name']}: {annotation['text']}"
 
     if annotations and cache_path:
+        print("Writing cache file")
         with open(cache_path, "w") as cache_file:
             json.dump({"search_after": annotations[-1]["created"]}, cache_file)
 
