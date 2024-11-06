@@ -40,3 +40,4 @@ jobs:
         env:
           SLACK_MESSAGE: ${{ steps.slack_message.outputs.SLACK_MESSAGE }}
           SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+        if: steps.slack_message.outputs.SLACK_MESSAGE
