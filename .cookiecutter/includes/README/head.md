@@ -8,6 +8,9 @@ them into Slack channels:
    It accepts a Hypothesis developer token and arbitrary [annotation search API](https://h.readthedocs.io/en/latest/api-reference/v1/#tag/annotations/paths/~1search/get)
    params as command line arguments.
 
+   The script caches the created time of the last-seen annotation and the next
+   time it runs it'll only output annotations newer than that.
+
    You can install the script with pipx and run it locally,
    or clone this repo and run the development version of the script with tox,
    see instructions below.
@@ -22,7 +25,7 @@ them into Slack channels:
    want this repo to be able to post to.
 
 3. Several caller workflows run periodically and call `notify.yml` to post
-   certain annotations into search channels. For example:
+   certain annotations into certain channels. For example:
 
    * [eng_annotations.yml](.github/workflows/eng_annotations.yml) posts annotations
      from the "Hypothesis Eng" group into the `#eng-annotations` Slack channel.
