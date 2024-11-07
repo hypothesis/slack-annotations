@@ -43,6 +43,8 @@ def notify(
             for target in annotation["target"]:
                 for selector in target["selector"]:
                     if exact := selector.get("exact"):
+                        if not exact:
+                            exact = "(None)"
                         if len(exact) > 2000:
                             exact = exact[:1997] + "..."
                         return exact
@@ -50,7 +52,11 @@ def notify(
             raise ValueError()
 
         def get_text(annotation):
-            text = annotation.get("text", "(None)")
+            text = annotation.get("text", None)
+
+            if not text:
+                text = "(None)"
+
             if len(text) > 2000:
                 text = text[:1997] + "..."
             return text
