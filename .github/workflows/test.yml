@@ -1,0 +1,13 @@
+name: Test
+concurrency:
+  group: test
+on:
+  workflow_dispatch:
+jobs:
+  Notify:
+    uses: ./.github/workflows/notify.yml
+    with:
+      cache_key: test
+      slack_channel_id: ${{ vars.TEST_SLACK_CHANNEL_ID }}
+    secrets:
+      SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
