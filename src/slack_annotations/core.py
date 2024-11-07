@@ -9,8 +9,6 @@ def notify(
 
     search_params = search_params or {}
 
-    search_params.setdefault("limit", 200)
-
     # Deliberately override any given sort or order param as these specific
     # values are needed for the algorithm below to work.
     search_params["sort"] = "created"
