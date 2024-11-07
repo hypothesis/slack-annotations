@@ -1,5 +1,5 @@
 import json
-from datetime import datetime, UTC, timedelta
+from datetime import UTC, datetime, timedelta
 
 import httpx
 
@@ -20,8 +20,7 @@ def notify(
         try:
             with open(cache_path, "r", encoding="utf-8") as cache_file:
                 search_params["search_after"] = max(
-                    search_params["search_after"],
-                    json.load(cache_file)["search_after"]
+                    search_params["search_after"], json.load(cache_file)["search_after"]
                 )
         except FileNotFoundError:
             pass
