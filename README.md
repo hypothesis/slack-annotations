@@ -55,7 +55,7 @@ them into Slack channels:
 5. The different workflows use various repo-level Actions secrets and variables
    for things like the Slack channel IDs to post to,
    the Hypothesis API authentication token to use,
-   the search params to use (if they contain secret values like group IDs),
+   the search params to use,
    and the Dead Man's Snitch IDs to report to.
 
 6. There's a `keepalive.yml` workflow that prevents the scheduled workflows
@@ -67,7 +67,9 @@ If you want to post annotations from a new search query into a new Slack channel
 
 1. Add the "GitHub Actions" Slack bot to the Slack channel that you want the workflow to post to.
 
-2. Create a new snitch for the workflow in Dead Man's Snitch
+2. Copy-paste the Slack channel ID into an Actions variable named `YOUR_WORKFLOW_SLACK_CHANNEL_ID`.
+
+3. Create a new snitch for the workflow in Dead Man's Snitch
    and put the snitch ID in a repo-level Actions secret named `YOUR_WORKFLOW_SNITCH_ID`.
 
    Be sure to give the snitch a good name and notes because these appear in any
@@ -76,7 +78,7 @@ If you want to post annotations from a new search query into a new Slack channel
 
    Set the snitch's alert type to "Smart".
 
-3. Put the search query params that you want to use in a repo-level Actions variable or secret named `YOUR_WORKFLOW_SEARCH_PARAMS`.
+4. Put the search query params that you want to use in a repo-level Actions variable or secret named `YOUR_WORKFLOW_SEARCH_PARAMS`.
 
    The query params should be formatted as a JSON object.
    You can use any of the params from the [annotation search API](https://h.readthedocs.io/en/latest/api-reference/v1/#tag/annotations/paths/~1search/get).
@@ -94,11 +96,11 @@ If you want to post annotations from a new search query into a new Slack channel
 
    If your search query contains any secret data (such as a group ID) then put it in an Actions secret rather than a variable.
 
-4. Create a new caller workflow by copy-pasting and editing one of the existing ones,
+5. Create a new caller workflow by copy-pasting and editing one of the existing ones,
    like [eng_annotations.yml](.github/workflows/eng_annotations.yml).
 
-5. Add the name of your workflow to the `__scheduled_workflows` setting in [.cookiecutter/cookiecutter.json]()
-   and `workflows` setting in [.github/workflows/keepalive.yml]().
+6. Add the name of your workflow to the `__scheduled_workflows` setting in [.cookiecutter/cookiecutter.json][]
+   and `workflows` setting in [.github/workflows/keepalive.yml][].
 
 ## Installing
 
