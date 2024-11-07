@@ -12,7 +12,7 @@ jobs:
       cache_key: eng_annotations
       slack_channel_id: ${{ vars.ENG_ANNOTATIONS_SLACK_CHANNEL_ID }}
     secrets:
-      SEARCH_PARAMS: '{"group": "${{ secrets.ENG_ANNOTATIONS_HYPOTHESIS_GROUP }}"}'
+      SEARCH_PARAMS: format('{"group": "{0}"}', ${{ secrets.ENG_ANNOTATIONS_HYPOTHESIS_GROUP }})
       HYPOTHESIS_API_TOKEN: ${{ secrets.HYPOTHESIS_API_TOKEN }}
       SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
   Snitch:
