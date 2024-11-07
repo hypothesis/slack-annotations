@@ -7,43 +7,16 @@ on:
   workflow_dispatch:
 jobs:
   Notify:
+    uses: ./.github/workflows/notify.yml
+    with:
+      cache_key: eng_annotations
+      slack_channel_id: ${{ vars.ENG_ANNOTATIONS_SLACK_CHANNEL_ID }}
+    secrets:
+      SEARCH_PARAMS: '{"group": "${{ secrets.ENG_ANNOTATIONS_HYPOTHESIS_GROUP }}"}'
+      HYPOTHESIS_API_TOKEN: ${{ secrets.HYPOTHESIS_API_TOKEN }}
+      SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+  Snitch:
+    needs: Notify
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/cache@v4
-        with:
-          key: cache-${{ github.run_number }}
-          path: ~/.cache.json
-          restore-keys: |
-            cache-
-      - name: Install Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: 3.13
-      - name: Install pipx
-        run: python -m pip install pipx
-      - name: Checkout slack-annotations
-        uses: actions/checkout@v4
-      - name: Install slack-annotations
-        run: python -m pipx install .
-      - name: Check for annotations
-        id: slack_message
-        run: |
-          {
-            echo 'SLACK_MESSAGE<<EOF'
-            slack-annotations \
-              --search-params '{"group": "${{ secrets.HYPOTHESIS_GROUP }}"}' \
-              --token ${{ secrets.HYPOTHESIS_API_TOKEN }} \
-              --cache-path ~/.cache.json
-            echo EOF
-          } >> "$GITHUB_OUTPUT"
-      - name: Post to Slack
-        uses: slackapi/slack-github-action@v1.27.0
-        with:
-          channel-id: ${{ vars.SLACK_CHANNEL }}
-          payload: ${{ env.SLACK_MESSAGE }}
-        env:
-          SLACK_MESSAGE: ${{ steps.slack_message.outputs.SLACK_MESSAGE }}
-          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
-        if: steps.slack_message.outputs.SLACK_MESSAGE
-      - name: Check in with Dead Man's Snitch
-        run: curl https://nosnch.in/${{ secrets.ENG_ANNOTATIONS_SNITCH_ID }}
+      - run: curl https://nosnch.in/${{ secrets.ENG_ANNOTATIONS_SNITCH_ID }}

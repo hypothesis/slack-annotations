@@ -2,24 +2,26 @@ name: Notify
 concurrency:
   group: notify
 on:
-  workflow_dispatch:
+  workflow_call:
     inputs:
       cache_key:
         required: true
         type: string
-      search_params:
+      slack_channel_id:
+        required: true
+        type: string
+    secrets:
+      SEARCH_PARAMS:
         required: false
         type: string
         default: "{}"
-      token:
+      HYPOTHESIS_API_TOKEN:
         required: false
         type: string
         default: ""
-      slack_channel:
-        required: false
+      SLACK_BOT_TOKEN:
+        required: true
         type: string
-        default: ""
-  workflow_call:
 jobs:
   Notify:
     runs-on: ubuntu-latest
@@ -46,15 +48,15 @@ jobs:
           {
             echo 'SLACK_MESSAGE<<EOF'
             slack-annotations \
-              --search-params '${{ inputs.search_params }}' \
-              --token '${{ inputs.token }}' \
+              --search-params '${{ secrets.SEARCH_PARAMS }}' \
+              --token '${{ secrets.HYPOTHESIS_API_TOKEN }}' \
               --cache-path ~/.cache.json
             echo EOF
           } >> "$GITHUB_OUTPUT"
       - name: Post to Slack
         uses: slackapi/slack-github-action@v1.27.0
         with:
-          channel-id: ${{ inputs.slack_channel || vars.DEFAULT_SLACK_CHANNEL }}
+          channel-id: ${{ inputs.slack_channel_id }}
           payload: ${{ env.SLACK_MESSAGE }}
         env:
           SLACK_MESSAGE: ${{ steps.slack_message.outputs.SLACK_MESSAGE }}
