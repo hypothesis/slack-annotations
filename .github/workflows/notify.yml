@@ -13,14 +13,11 @@ on:
     secrets:
       SEARCH_PARAMS:
         required: false
-        type: string
       HYPOTHESIS_API_TOKEN:
         required: false
-        type: string
         default: ""
       SLACK_BOT_TOKEN:
         required: true
-        type: string
 jobs:
   Notify:
     runs-on: ubuntu-latest
