@@ -12,10 +12,11 @@ jobs:
       cache_key: pr_website
       slack_channel_id: ${{ vars.PR_WEBSITE_SLACK_CHANNEL_ID }}
     secrets:
-      SEARCH_PARAMS: '{"wildcard_uri": ["https://web.hypothes.is/*", "https://hypothes.is/*"]}'
+      SEARCH_PARAMS: ${{ vars.PR_WEBSITE_SEARCH_PARAMS }}
       SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
   Snitch:
     needs: Notify
     runs-on: ubuntu-latest
     steps:
       - run: curl https://nosnch.in/${{ secrets.PR_WEBSITE_SNITCH_ID }}
+
