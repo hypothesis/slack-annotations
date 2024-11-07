@@ -18,7 +18,7 @@ on:
       slack_channel:
         required: false
         type: string
-        default: ${{ vars.DEFAULT_SLACK_CHANNEL }}
+        default: ""
   workflow_call:
 jobs:
   Notify:
@@ -54,7 +54,7 @@ jobs:
       - name: Post to Slack
         uses: slackapi/slack-github-action@v1.27.0
         with:
-          channel-id: ${{ inputs.slack_channel }}
+          channel-id: ${{ inputs.slack_channel || vars.DEFAULT_SLACK_CHANNEL }}
           payload: ${{ env.SLACK_MESSAGE }}
         env:
           SLACK_MESSAGE: ${{ steps.slack_message.outputs.SLACK_MESSAGE }}
