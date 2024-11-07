@@ -1,16 +1,17 @@
 <a href="https://github.com/hypothesis/slack-annotations/actions/workflows/ci.yml?query=branch%3Amain"><img src="https://img.shields.io/github/actions/workflow/status/hypothesis/slack-annotations/ci.yml?branch=main"></a>
-<a><img src="https://img.shields.io/badge/python-3.13 | 3.12 | 3.11 | 3.10 | 3.9 | 3.8-success"></a>
+<a><img src="https://img.shields.io/badge/python-3.13 | 3.12 | 3.11-success"></a>
 <a href="https://github.com/hypothesis/slack-annotations/blob/main/LICENSE"><img src="https://img.shields.io/badge/license-BSD--2--Clause-success"></a>
 <a href="https://github.com/hypothesis/cookiecutters/tree/main/pypackage"><img src="https://img.shields.io/badge/cookiecutter-pypackage-success"></a>
 <a href="https://black.readthedocs.io/en/stable/"><img src="https://img.shields.io/badge/code%20style-black-000000"></a>
 
 # slack-annotations
 
+Post annotations to Slack.
+
 This repo contains a Python script (`slack-annotations`) that fetches
 annotations from the Hypothesis API and prints them out in a Slack-compatible
 format, and a [GitHub Actions workflow](.github/workflows/notify.yml) that runs
 periodically and posts new annotations into a Slack channel.
-
 
 ## Installing
 
