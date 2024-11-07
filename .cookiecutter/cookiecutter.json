@@ -30,7 +30,7 @@
     "__tests_runner_type": "ubuntu-latest",
     "__coverage_runner_type": "ubuntu-latest",
     "__functests_runner_type": "ubuntu-latest",
-    "__scheduled_workflows": ", eng-annotations",
+    "__scheduled_workflows": ", eng-annotations, pr-website",
     "_repo_dir": "/home/seanh/.cookiecutters/cookiecutters/pypackage",
     "_checkout": null
   }
