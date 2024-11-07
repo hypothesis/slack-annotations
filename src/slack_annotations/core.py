@@ -50,7 +50,7 @@ def notify(
             raise ValueError()
 
         def get_text(annotation):
-            text = annotation.get("text", "(None")
+            text = annotation.get("text", "(None)")
             if len(text) > 2000:
                 text = text[:1997] + "..."
             return text
