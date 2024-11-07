@@ -1,4 +1,5 @@
 import json
+from datetime import datetime, UTC, timedelta
 
 import httpx
 
@@ -13,11 +14,15 @@ def notify(
     # values are needed for the algorithm below to work.
     search_params["sort"] = "created"
     search_params["order"] = "asc"
+    search_params["search_after"] = (datetime.now(UTC) - timedelta(hours=1)).isoformat()
 
     if cache_path:
         try:
             with open(cache_path, "r", encoding="utf-8") as cache_file:
-                search_params["search_after"] = json.load(cache_file)["search_after"]
+                search_params["search_after"] = max(
+                    search_params["search_after"],
+                    json.load(cache_file)["search_after"]
+                )
         except FileNotFoundError:
             pass
 
