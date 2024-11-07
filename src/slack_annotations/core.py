@@ -4,17 +4,22 @@ import httpx
 
 
 def notify(
-    group=None, token=None, cache_path=None
+    search_params=None, token=None, cache_path=None
 ):  # pylint:disable=too-complex # pragma:no cover
-    params = {"limit": 200, "sort": "created", "order": "asc"}
 
-    if group:
-        params["group"] = group
+    search_params = search_params or {}
+
+    search_params.setdefault("limit", 200)
+
+    # Deliberately override any given sort or order param as these specific
+    # values are needed for the algorithm below to work.
+    search_params["sort"] = "created"
+    search_params["order"] = "asc"
 
     if cache_path:
         try:
             with open(cache_path, "r", encoding="utf-8") as cache_file:
-                params["search_after"] = json.load(cache_file)["search_after"]
+                search_params["search_after"] = json.load(cache_file)["search_after"]
         except FileNotFoundError:
             pass
 
@@ -24,7 +29,9 @@ def notify(
         headers["Authorization"] = f"Bearer {token}"
 
     annotations = (
-        httpx.get("https://hypothes.is/api/search", params=params, headers=headers)
+        httpx.get(
+            "https://hypothes.is/api/search", params=search_params, headers=headers
+        )
         .raise_for_status()
         .json()["rows"]
     )

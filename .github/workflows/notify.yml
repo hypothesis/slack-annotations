@@ -31,7 +31,7 @@ jobs:
           {
             echo 'SLACK_MESSAGE<<EOF'
             slack-annotations \
-              --group ${{ secrets.HYPOTHESIS_GROUP }} \
+              --search-params '{"group": "${{ secrets.HYPOTHESIS_GROUP }}"}' \
               --token ${{ secrets.HYPOTHESIS_API_TOKEN }} \
               --cache-path ~/.cache.json
             echo EOF
