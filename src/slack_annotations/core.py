@@ -5,7 +5,7 @@ import httpx
 
 def notify(
     search_params=None, token=None, cache_path=None
-):  # pylint:disable=too-complex # pragma:no cover
+):  # pylint:disable=too-complex,too-many-statements # pragma:no cover
 
     search_params = search_params or {}
 
