@@ -15,7 +15,7 @@
 name: Keepalive
 on:
   workflow_run:
-    workflows: [CI, Notify]
+    workflows: [CI, eng-annotations]
     types: [completed]
     branches: [main]
 jobs:
