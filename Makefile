@@ -48,25 +48,10 @@ $(call help,make test-py311,"run the unit tests in Python 3.11")
 test-py311: python
 	@pyenv exec tox -qe py311-tests
 
-.PHONY: test-py310
-$(call help,make test-py310,"run the unit tests in Python 3.10")
-test-py310: python
-	@pyenv exec tox -qe py310-tests
-
-.PHONY: test-py39
-$(call help,make test-py39,"run the unit tests in Python 3.9")
-test-py39: python
-	@pyenv exec tox -qe py39-tests
-
-.PHONY: test-py38
-$(call help,make test-py38,"run the unit tests in Python 3.8")
-test-py38: python
-	@pyenv exec tox -qe py38-tests
-
 .PHONY: coverage
 $(call help,make coverage,"run the tests and print the coverage report")
 coverage: python
-	@pyenv exec tox --parallel -qe 'tests,py{312,311,310,39,38}-tests,coverage'
+	@pyenv exec tox --parallel -qe 'tests,py{312,311}-tests,coverage'
 
 .PHONY: functests
 $(call help,make functests,"run the functional tests in Python 3.13")
@@ -83,26 +68,11 @@ $(call help,make functests-py311,"run the functional tests in Python 3.11")
 functests-py311: python
 	@pyenv exec tox -qe py311-functests
 
-.PHONY: functests-py310
-$(call help,make functests-py310,"run the functional tests in Python 3.10")
-functests-py310: python
-	@pyenv exec tox -qe py310-functests
-
-.PHONY: functests-py39
-$(call help,make functests-py39,"run the functional tests in Python 3.9")
-functests-py39: python
-	@pyenv exec tox -qe py39-functests
-
-.PHONY: functests-py38
-$(call help,make functests-py38,"run the functional tests in Python 3.8")
-functests-py38: python
-	@pyenv exec tox -qe py38-functests
-
 .PHONY: sure
 $(call help,make sure,"make sure that the formatting$(comma) linting and tests all pass")
 sure: python
 sure:
-	@pyenv exec tox --parallel -qe 'checkformatting,lint,typecheck,tests,py{312,311,310,39,38}-tests,coverage,functests,py{312,311,310,39,38}-functests'
+	@pyenv exec tox --parallel -qe 'checkformatting,lint,typecheck,tests,py{312,311}-tests,coverage,functests,py{312,311}-functests'
 
 .PHONY: template
 $(call help,make template,"update from the latest cookiecutter template")
