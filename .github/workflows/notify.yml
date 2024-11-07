@@ -15,7 +15,6 @@ on:
         required: false
       HYPOTHESIS_API_TOKEN:
         required: false
-        default: ""
       SLACK_BOT_TOKEN:
         required: true
 jobs:
