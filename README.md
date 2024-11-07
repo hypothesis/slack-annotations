@@ -99,8 +99,8 @@ If you want to post annotations from a new search query into a new Slack channel
 5. Create a new caller workflow by copy-pasting and editing one of the existing ones,
    like [eng_annotations.yml](.github/workflows/eng_annotations.yml).
 
-6. Add the name of your workflow to the `__scheduled_workflows` setting in [.cookiecutter/cookiecutter.json][]
-   and `workflows` setting in [.github/workflows/keepalive.yml][].
+6. Add the name of your workflow to the `__scheduled_workflows` setting in [.cookiecutter/cookiecutter.json](.cookiecutter/cookiecutter.json)
+   and `workflows` setting in [.github/workflows/keepalive.yml](.github/workflows/keepalive.yml).
 
 ## Installing
 
