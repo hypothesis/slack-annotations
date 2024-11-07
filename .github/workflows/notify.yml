@@ -47,7 +47,7 @@ jobs:
             echo 'SLACK_MESSAGE<<EOF'
             slack-annotations \
               --search-params '${{ inputs.search_params }}' \
-              --token ${{ inputs.token }} \
+              --token '${{ inputs.token }}' \
               --cache-path ~/.cache.json
             echo EOF
           } >> "$GITHUB_OUTPUT"
