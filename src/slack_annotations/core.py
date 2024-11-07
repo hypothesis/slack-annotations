@@ -43,9 +43,17 @@ def notify(
             for target in annotation["target"]:
                 for selector in target["selector"]:
                     if exact := selector.get("exact"):
+                        if len(exact) > 2000:
+                            exact = exact[:1997] + "..."
                         return exact
 
             raise ValueError()
+
+        def get_text(annotation):
+            text = annotation.get("text", "(None")
+            if len(text) > 2000:
+                text = text[:1997] + "..."
+            return text
 
         try:
             quote = get_quote(annotation)
@@ -64,7 +72,7 @@ def notify(
                 "text": f"*Annotation* (<{annotation['links']['incontext']}|in-context link>):",
             },
             {"type": "plain_text", "text": quote},
-            {"type": "plain_text", "text": annotation.get("text", "(None)")},
+            {"type": "plain_text", "text": get_text(annotation)},
         ]
 
         display_name = annotation["user_info"]["display_name"]
