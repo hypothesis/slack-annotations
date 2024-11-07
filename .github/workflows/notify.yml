@@ -14,7 +14,6 @@ on:
       SEARCH_PARAMS:
         required: false
         type: string
-        default: "{}"
       HYPOTHESIS_API_TOKEN:
         required: false
         type: string
