@@ -18,6 +18,8 @@ them into Slack channels:
 2. A reusable GitHub Actions workflow [notify.yml](.github/workflows/notify.yml) calls the
    Python script and pipes the output to Slack's GitHub action to post it to Slack.
 
+   This workflow isn't run directly, it only exists to be called by other workflows (see below).
+
    We have a [Slack bot](https://hypothes-is.slack.com/marketplace/A05SHSTMT5X-github-actions)
    that's used to authenticate the posting into Slack. The repo uses an
    organization-level GitHub Actions secret called `SLACK_BOT_TOKEN` to
@@ -35,11 +37,7 @@ them into Slack channels:
      into `#test-slack-annotations` for testing. This one actually doesn't run
      on a schedule, you have to run it manually.
 
-   If you want to post the annotations from another search into another channel,
-   copy one of these scripts and edit it. Remember that you'll need to add the
-   Slack bot to the channel that you want to post to.
-
-4. Each scheduled workflow has a (manually-created) snitch in
+4. Each scheduled workflow has a snitch in
    [Dead Man's Snitch](https://deadmanssnitch.com/)
    that it pings each time it runs successfully,
    so we'll get an alert from Dead Man's Snitch if it stops running.
@@ -52,3 +50,42 @@ them into Slack channels:
 
 6. There's a `keepalive.yml` workflow that prevents the scheduled workflows
    from getting disabled by GitHub due to repo inactivity.
+
+## Adding another workflow
+
+If you want to post annotations from a new search query into a new Slack channel you should:
+
+1. Add the "GitHub Actions" Slack bot to the Slack channel that you want the workflow to post to.
+
+2. Create a new snitch for the workflow in Dead Man's Snitch
+   and put the snitch ID in a repo-level Actions secret named `YOUR_WORKFLOW_SNITCH_ID`.
+
+   Be sure to give the snitch a good name and notes because these appear in any
+   alerts sent by the snitch. See [the snitch for `eng_annotations.yml`](https://deadmanssnitch.com/snitches/a772d30828/edit)
+   for an example.
+
+   Set the snitch's alert type to "Smart".
+
+3. Put the search query params that you want to use in a repo-level Actions variable or secret named `YOUR_WORKFLOW_SEARCH_PARAMS`.
+
+   The query params should be formatted as a JSON object.
+   You can use any of the params from the [annotation search API](https://h.readthedocs.io/en/latest/api-reference/v1/#tag/annotations/paths/~1search/get).
+   For example to search for all annotations in a certain group:
+
+   ```json
+   {"group": "<GROUP_ID>"}
+   ```
+
+   Or to search for all annotations of a given site:
+
+   ```json
+   {"wildcard_uri": ["https://web.hypothes.is/*", "https://hypothes.is/*"]}
+   ```
+
+   If your search query contains any secret data (such as a group ID) then put it in an Actions secret rather than a variable.
+
+4. Create a new caller workflow by copy-pasting and editing one of the existing ones,
+   like [eng_annotations.yml](.github/workflows/eng_annotations.yml).
+
+5. Add the name of your workflow to the `__scheduled_workflows` setting in [.cookiecutter/cookiecutter.json]()
+   and `workflows` setting in [.github/workflows/keepalive.yml]().
