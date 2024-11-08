@@ -1,6 +1,4 @@
 name: Notify
-concurrency:
-  group: notify
 on:
   workflow_call:
     inputs:
