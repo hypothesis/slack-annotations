@@ -1,6 +1,7 @@
 import json
 from datetime import UTC, datetime, timedelta
 
+import httpx
 from freezegun import freeze_time
 
 from src.slack_annotations import core
@@ -36,3 +37,18 @@ def test_update_cache(tmp_path):
     with open(cache_path, "r", encoding="utf-8") as f:
         data = json.load(f)
     assert data["search_after"] == search_after
+
+
+def test_fetch_annotations(httpx_mock):
+    annotations = {"rows": [{"id": 1, "created": "2024-12-01T00:00:00+00:00"}]}
+    params = {"param1": "value1"}
+    headers = {"Authorization": "Bearer test_token"}
+    httpx_mock.add_response(
+        url=httpx.URL("https://hypothes.is/api/search", params=params),
+        content=json.dumps(annotations),
+        match_headers=headers,
+    )
+
+    result = core._fetch_annotations(params, headers)
+
+    assert result == annotations["rows"]
