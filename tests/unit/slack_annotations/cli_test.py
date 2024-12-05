@@ -18,3 +18,14 @@ def test_version(capsys):
 
     assert capsys.readouterr().out.strip() == version("slack-annotations")
     assert not exc_info.value.code
+
+
+def test_default(capsys, mocker):
+    notify = mocker.patch("slack_annotations.cli.notify")
+    notify_output = "Test notify output"
+    notify.return_value = notify_output
+
+    cli([])
+
+    notify.assert_called_once_with(None, None, None)
+    assert capsys.readouterr().out.strip() == notify_output
