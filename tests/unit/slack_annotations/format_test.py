@@ -48,6 +48,12 @@ class TestFormatAnnotation:
             "uri": "https://example.com/",
             "links": {"incontext": "https://hyp.is/test_annotation_id_1/example.com/"},
             "user_info": {"display_name": "md............................"},
+            "target": [
+                {
+                    "source": "https://web.hypothes.is/blog/step-by-step-guide-to-using-hypothesis-for-collaborative-projects/",
+                    "selector": [{"exact": "Annotated text"}],
+                }
+            ],
         }
 
         assert _format_annotation(annotation) == {
@@ -62,7 +68,7 @@ class TestFormatAnnotation:
                     "type": "mrkdwn",
                     "text": "*Annotation* (<https://hyp.is/test_annotation_id_1/example.com/|in-context link>):",
                 },
-                {"type": "plain_text", "text": "(None)"},
+                {"type": "plain_text", "text": "Annotated text"},
                 {"type": "plain_text", "text": "(None)"},
             ],
         }
@@ -83,12 +89,33 @@ class TestFormatAnnotation:
                 "text": "`test_user_1` annotated <https://example.com/|Annotation title>:",
             },
             "fields": [
-                {"type": "mrkdwn", "text": "*Quote:*"},
                 {
                     "type": "mrkdwn",
-                    "text": "*Annotation* (<https://hyp.is/test_annotation_id_1/example.com/|in-context link>):",
+                    "text": "*Page Note* (<https://hyp.is/test_annotation_id_1/example.com/|in-context link>):",
                 },
                 {"type": "plain_text", "text": "(None)"},
+            ],
+        }
+
+    def test_page_note(self):
+        annotation = {
+            "user": "acct:test_user_1@hypothes.is",
+            "uri": "https://example.com/",
+            "links": {"incontext": "https://hyp.is/test_annotation_id_1/example.com/"},
+            "user_info": {"display_name": "md............................"},
+        }
+
+        assert _format_annotation(annotation) == {
+            "type": "section",
+            "text": {
+                "type": "mrkdwn",
+                "text": "`test_user_1` (md............................) annotated https://example.com/:",
+            },
+            "fields": [
+                {
+                    "type": "mrkdwn",
+                    "text": "*Page Note* (<https://hyp.is/test_annotation_id_1/example.com/|in-context link>):",
+                },
                 {"type": "plain_text", "text": "(None)"},
             ],
         }

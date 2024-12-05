@@ -6,8 +6,8 @@ NONE_TEXT = "(None)"
 
 
 def _format_annotation(annotation: dict[str, Any]) -> dict[str, Any]:
-    fields = _build_annotation_fields(annotation)
     summary = _build_annotation_summary(annotation)
+    fields = _build_annotation_fields(annotation)
     return {
         "type": "section",
         "text": {"type": "mrkdwn", "text": summary},
@@ -85,17 +85,28 @@ def _build_annotation_summary(annotation: dict[str, Any]) -> str:
 
 
 def _build_annotation_fields(annotation: dict[str, Any]) -> list[dict[str, Any]]:
+    quote = None
     try:
         quote = _get_quote(annotation)
     except Exception:  # pylint:disable=broad-exception-caught
-        quote = NONE_TEXT
+        pass
+    incontext_link = annotation["links"]["incontext"]
 
-    return [
-        {"type": "mrkdwn", "text": "*Quote:*"},
-        {
-            "type": "mrkdwn",
-            "text": f"*Annotation* (<{annotation['links']['incontext']}|in-context link>):",
-        },
-        {"type": "plain_text", "text": quote},
-        {"type": "plain_text", "text": _get_text(annotation)},
-    ]
+    if quote:
+        fields = [
+            {"type": "mrkdwn", "text": "*Quote:*"},
+            {
+                "type": "mrkdwn",
+                "text": f"*Annotation* (<{incontext_link}|in-context link>):",
+            },
+            {"type": "plain_text", "text": quote},
+        ]
+    else:
+        fields = [
+            {
+                "type": "mrkdwn",
+                "text": f"*Page Note* (<{incontext_link}|in-context link>):",
+            },
+        ]
+    fields.append({"type": "plain_text", "text": _get_text(annotation)})
+    return fields

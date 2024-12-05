@@ -98,12 +98,10 @@ def slack_annotations():
                     "text": "`test_user_1` (md............................) annotated <https://example.com/|Annotating the law | Hypothes.is>:",
                 },
                 "fields": [
-                    {"type": "mrkdwn", "text": "*Quote:*"},
                     {
                         "type": "mrkdwn",
-                        "text": "*Annotation* (<https://hyp.is/test_annotation_id_1/example.com/|in-context link>):",
+                        "text": "*Page Note* (<https://hyp.is/test_annotation_id_1/example.com/|in-context link>):",
                     },
-                    {"type": "plain_text", "text": "(None)"},
                     {"type": "plain_text", "text": "test_user_1 reply"},
                 ],
             },
