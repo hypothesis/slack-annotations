@@ -119,3 +119,27 @@ class TestFormatAnnotation:
                 {"type": "plain_text", "text": "(None)"},
             ],
         }
+
+    def test_reply(self):
+        annotation = {
+            "user": "acct:test_user_1@hypothes.is",
+            "uri": "https://example.com/",
+            "links": {"incontext": "https://hyp.is/test_annotation_id_1/example.com/"},
+            "user_info": {"display_name": None},
+            "references": ["test_annotation_id_2"],
+        }
+
+        assert _format_annotation(annotation) == {
+            "type": "section",
+            "text": {
+                "type": "mrkdwn",
+                "text": "`test_user_1` annotated https://example.com/:",
+            },
+            "fields": [
+                {
+                    "type": "mrkdwn",
+                    "text": "*Reply* (<https://hyp.is/test_annotation_id_1/example.com/|in-context link>):",
+                },
+                {"type": "plain_text", "text": "(None)"},
+            ],
+        }

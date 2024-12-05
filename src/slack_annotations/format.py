@@ -101,6 +101,13 @@ def _build_annotation_fields(annotation: dict[str, Any]) -> list[dict[str, Any]]
             },
             {"type": "plain_text", "text": quote},
         ]
+    elif annotation.get("references"):
+        fields = [
+            {
+                "type": "mrkdwn",
+                "text": f"*Reply* (<{incontext_link}|in-context link>):",
+            },
+        ]
     else:
         fields = [
             {
