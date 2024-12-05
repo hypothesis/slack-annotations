@@ -2,7 +2,7 @@
   "template": "https://github.com/hypothesis/cookiecutters",
   "checkout": null,
   "directory": "pypackage",
-  "ignore": [],
+  "ignore": ["tests/functional/sanity_test.py"],
   "extra_context": {
     "name": "slack-annotations",
     "package_name": "slack_annotations",

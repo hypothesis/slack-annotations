@@ -3,6 +3,8 @@ from datetime import UTC, datetime, timedelta
 
 import httpx
 
+SEARCH_HOURS = 1
+
 
 def notify(
     search_params=None, token=None, cache_path=None
@@ -14,7 +16,9 @@ def notify(
     # values are needed for the algorithm below to work.
     search_params["sort"] = "created"
     search_params["order"] = "asc"
-    search_params["search_after"] = (datetime.now(UTC) - timedelta(hours=1)).isoformat()
+    search_params["search_after"] = (
+        datetime.now(UTC) - timedelta(hours=SEARCH_HOURS)
+    ).isoformat()
 
     if cache_path:
         try:
