@@ -78,7 +78,10 @@ def _build_annotation_summary(annotation: dict[str, Any]) -> str:
         document_link = f"<{uri}|{title}>"
     else:
         document_link = uri
-    return f"`{username}` ({display_name}) annotated {document_link}:"
+
+    if display_name:
+        return f"`{username}` ({display_name}) annotated {document_link}:"
+    return f"`{username}` annotated {document_link}:"
 
 
 def _build_annotation_fields(annotation: dict[str, Any]) -> list[dict[str, Any]]:

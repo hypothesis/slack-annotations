@@ -41,27 +41,54 @@ def test_format_empty_annotations():
     assert not format_annotations([])
 
 
-def test_format_annotation_without_title():
-    annotation = {
-        "user": "acct:test_user_1@hypothes.is",
-        "uri": "https://example.com/",
-        "links": {"incontext": "https://hyp.is/test_annotation_id_1/example.com/"},
-        "user_info": {"display_name": "md............................"},
-    }
+class TestFormatAnnotation:
+    def test_without_title(self):
+        annotation = {
+            "user": "acct:test_user_1@hypothes.is",
+            "uri": "https://example.com/",
+            "links": {"incontext": "https://hyp.is/test_annotation_id_1/example.com/"},
+            "user_info": {"display_name": "md............................"},
+        }
 
-    assert _format_annotation(annotation) == {
-        "type": "section",
-        "text": {
-            "type": "mrkdwn",
-            "text": "`test_user_1` (md............................) annotated https://example.com/:",
-        },
-        "fields": [
-            {"type": "mrkdwn", "text": "*Quote:*"},
-            {
+        assert _format_annotation(annotation) == {
+            "type": "section",
+            "text": {
                 "type": "mrkdwn",
-                "text": "*Annotation* (<https://hyp.is/test_annotation_id_1/example.com/|in-context link>):",
+                "text": "`test_user_1` (md............................) annotated https://example.com/:",
             },
-            {"type": "plain_text", "text": "(None)"},
-            {"type": "plain_text", "text": "(None)"},
-        ],
-    }
+            "fields": [
+                {"type": "mrkdwn", "text": "*Quote:*"},
+                {
+                    "type": "mrkdwn",
+                    "text": "*Annotation* (<https://hyp.is/test_annotation_id_1/example.com/|in-context link>):",
+                },
+                {"type": "plain_text", "text": "(None)"},
+                {"type": "plain_text", "text": "(None)"},
+            ],
+        }
+
+    def test_without_user_info(self):
+        annotation = {
+            "user": "acct:test_user_1@hypothes.is",
+            "uri": "https://example.com/",
+            "links": {"incontext": "https://hyp.is/test_annotation_id_1/example.com/"},
+            "document": {"title": ["Annotation title"]},
+            "user_info": {"display_name": None},
+        }
+
+        assert _format_annotation(annotation) == {
+            "type": "section",
+            "text": {
+                "type": "mrkdwn",
+                "text": "`test_user_1` annotated <https://example.com/|Annotation title>:",
+            },
+            "fields": [
+                {"type": "mrkdwn", "text": "*Quote:*"},
+                {
+                    "type": "mrkdwn",
+                    "text": "*Annotation* (<https://hyp.is/test_annotation_id_1/example.com/|in-context link>):",
+                },
+                {"type": "plain_text", "text": "(None)"},
+                {"type": "plain_text", "text": "(None)"},
+            ],
+        }
