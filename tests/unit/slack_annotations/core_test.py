@@ -5,15 +5,13 @@ import httpx
 import pytest
 from freezegun import freeze_time
 
-from slack_annotations.core import (
+from slack_annotations.core import SEARCH_HOURS, _get_search_after, notify
+from slack_annotations.format import (
     MAX_TEXT_LENGTH,
-    SEARCH_HOURS,
     _format_annotation,
-    _format_annotations,
     _get_quote,
-    _get_search_after,
     _trim_text,
-    notify,
+    format_annotations,
 )
 
 
@@ -99,7 +97,7 @@ def test_trim_long_text():
 
 
 def test_format_empty_annotations():
-    assert not _format_annotations([])
+    assert not format_annotations([])
 
 
 def test_format_annotation_without_title():
