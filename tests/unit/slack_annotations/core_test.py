@@ -11,7 +11,7 @@ from src.slack_annotations.core import (
     _format_annotations,
     _get_search_after,
     _init_search_params,
-    _update_cache,
+    _update_cache, notify,
 )
 
 
@@ -63,8 +63,23 @@ def test_fetch_annotations(httpx_mock):
 
 
 def test_format_annotations(search_annotations, slack_annotations):
-    result = _format_annotations(search_annotations)
-    assert result == json.dumps(slack_annotations)
+    assert _format_annotations(search_annotations["rows"]) == json.dumps(slack_annotations)
+
+
+@freeze_time("2024-12-01T01:00:00+00:00")
+def test_default_notify(search_annotations, slack_annotations, httpx_mock):
+    search_after = (datetime.now(UTC) - timedelta(hours=SEARCH_HOURS)).isoformat()
+    params = {
+        "sort": "created",
+        "order": "asc",
+        "search_after": search_after,
+    }
+    httpx_mock.add_response(
+        url=httpx.URL("https://hypothes.is/api/search", params=params),
+        content=json.dumps(search_annotations),
+    )
+
+    assert notify() == json.dumps(slack_annotations)
 
 
 @pytest.fixture
@@ -104,14 +119,18 @@ def slack_annotations():
 
 @pytest.fixture
 def search_annotations():
-    return [
-        {
-            "created": "2024-12-02T18:34:42.333087+00:00",
-            "user": "acct:test_user_1@hypothes.is",
-            "uri": "https://example.com/",
-            "text": "test_user_1 reply",
-            "document": {"title": ["Annotating the law | Hypothes.is"]},
-            "links": {"incontext": "https://hyp.is/test_annotation_id_1/example.com/"},
-            "user_info": {"display_name": "md............................"},
-        }
-    ]
+    return {
+        "rows": [
+            {
+                "created": "2024-12-02T18:34:42.333087+00:00",
+                "user": "acct:test_user_1@hypothes.is",
+                "uri": "https://example.com/",
+                "text": "test_user_1 reply",
+                "document": {"title": ["Annotating the law | Hypothes.is"]},
+                "links": {
+                    "incontext": "https://hyp.is/test_annotation_id_1/example.com/"
+                },
+                "user_info": {"display_name": "md............................"},
+            },
+        ]
+    }
