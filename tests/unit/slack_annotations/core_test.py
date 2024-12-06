@@ -6,12 +6,14 @@ import pytest
 from freezegun import freeze_time
 
 from slack_annotations.core import (
+    MAX_TEXT_LENGTH,
     SEARCH_HOURS,
     _fetch_annotations,
     _format_annotations,
     _get_quote,
     _get_search_after,
     _init_search_params,
+    _trim_text,
     _update_cache,
     notify,
 )
@@ -119,6 +121,13 @@ def test_get_quote_without_exact():
 
     with pytest.raises(ValueError):
         _get_quote(annotation)
+
+
+def test_trim_long_text():
+    text = "a" * (MAX_TEXT_LENGTH + 1)
+    stub = "..."
+    assert len(_trim_text(text)) == MAX_TEXT_LENGTH
+    assert _trim_text(text).endswith(stub)
 
 
 @pytest.fixture
