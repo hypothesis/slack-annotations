@@ -13,7 +13,7 @@ def notify(
     search_params: dict[str, Any] | None = None,
     token: str | None = None,
     cache_path: str | None = None,
-):
+) -> str:
     search_params = _init_search_params(search_params or {})
     if cache_path:
         search_params["search_after"] = _get_search_after(
