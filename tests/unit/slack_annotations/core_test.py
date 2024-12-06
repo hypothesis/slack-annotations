@@ -10,13 +10,15 @@ from slack_annotations.core import (
     NONE_TEXT,
     SEARCH_HOURS,
     _fetch_annotations,
+    _format_annotation,
     _format_annotations,
     _get_quote,
     _get_search_after,
+    _get_text,
     _init_search_params,
     _trim_text,
     _update_cache,
-    notify, _get_text,
+    notify,
 )
 
 
@@ -143,6 +145,32 @@ def test_get_tex_with_empty_text():
 
 def test_format_empty_annotations():
     assert _format_annotations([]) == ""
+
+
+def test_format_annotation_without_title():
+    annotation = {
+        "user": "acct:test_user_1@hypothes.is",
+        "uri": "https://example.com/",
+        "links": {"incontext": "https://hyp.is/test_annotation_id_1/example.com/"},
+        "user_info": {"display_name": "md............................"},
+    }
+
+    assert _format_annotation(annotation) == {
+        "type": "section",
+        "text": {
+            "type": "mrkdwn",
+            "text": "`test_user_1` (md............................) annotated https://example.com/:",
+        },
+        "fields": [
+            {"type": "mrkdwn", "text": "*Quote:*"},
+            {
+                "type": "mrkdwn",
+                "text": "*Annotation* (<https://hyp.is/test_annotation_id_1/example.com/|in-context link>):",
+            },
+            {"type": "plain_text", "text": "(None)"},
+            {"type": "plain_text", "text": "(None)"},
+        ],
+    }
 
 
 @pytest.fixture
