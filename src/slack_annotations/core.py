@@ -14,23 +14,19 @@ def notify(
     token: str | None = None,
     cache_path: str | None = None,
 ) -> str:
-    search_params = _init_search_params(search_params or {})
-    if cache_path:
-        search_params["search_after"] = _get_search_after(
-            cache_path, search_params["search_after"]
-        )
-    headers = {}
-    if token:
-        headers["Authorization"] = f"Bearer {token}"
+    search_params = _make_search_params(search_params, cache_path)
+    headers = _make_headers(token)
 
     annotations = _fetch_annotations(search_params, headers)
-    if annotations and cache_path:
-        _update_cache(cache_path, annotations[-1]["created"])
 
+    _maybe_update_cache(annotations, cache_path)
     return _format_annotations(annotations)
 
 
-def _init_search_params(params: dict[str, Any]) -> dict[str, Any]:
+def _make_search_params(
+    params: dict[str, Any] | None = None, cache_path: str | None = None
+) -> dict[str, Any]:
+    params = params or {}
     # Deliberately override any given sort or order param as these specific
     # values are needed for the algorithm below to work.
     params.update(
@@ -42,7 +38,13 @@ def _init_search_params(params: dict[str, Any]) -> dict[str, Any]:
             ).isoformat(),
         }
     )
+    if cache_path:
+        params["search_after"] = _get_search_after(cache_path, params["search_after"])
     return params
+
+
+def _make_headers(token: str | None = None) -> dict[str, str]:
+    return {"Authorization": f"Bearer {token}"} if token else {}
 
 
 def _get_search_after(cache_path: str, default: str) -> str:
@@ -54,7 +56,12 @@ def _get_search_after(cache_path: str, default: str) -> str:
     return default
 
 
-def _update_cache(cache_path: str, search_after: str) -> None:
+def _maybe_update_cache(
+    annotations: list[dict[str, Any]], cache_path: str | None = None
+) -> None:
+    if not annotations or not cache_path:
+        return
+    search_after = annotations[-1]["created"]
     with open(cache_path, "w", encoding="utf-8") as f:
         json.dump({"search_after": search_after}, f)
 
