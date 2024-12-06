@@ -105,11 +105,11 @@ def _format_annotations(annotations: list[dict[str, Any]]) -> str:
     if not annotations:
         return ""
 
-    if len(annotations) == 1:
-        summary = "A new annotation was posted"
-    else:
-        summary = f"{len(annotations)} new annotations"
-
+    summary = (
+        f"{len(annotations)} new annotations"
+        if len(annotations) > 1
+        else "A new annotation was posted"
+    )
     blocks = []
     for annotation in annotations:
         blocks.append(_format_annotation(annotation))

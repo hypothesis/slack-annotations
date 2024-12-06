@@ -108,7 +108,7 @@ def test_get_tex_with_empty_text():
 
 
 def test_format_empty_annotations():
-    assert _format_annotations([]) == ""
+    assert not _format_annotations([])
 
 
 def test_format_annotation_without_title():
@@ -140,8 +140,25 @@ def test_format_annotation_without_title():
 @pytest.fixture
 def slack_annotations():
     return {
-        "text": "A new annotation was posted",
+        "text": "2 new annotations",
         "blocks": [
+            {
+                "type": "section",
+                "text": {
+                    "type": "mrkdwn",
+                    "text": "`test_user_1` (md............................) annotated <https://example.com/|Annotating the law | Hypothes.is>:",
+                },
+                "fields": [
+                    {"type": "mrkdwn", "text": "*Quote:*"},
+                    {
+                        "type": "mrkdwn",
+                        "text": "*Annotation* (<https://hyp.is/test_annotation_id_1/example.com/|in-context link>):",
+                    },
+                    {"type": "plain_text", "text": "(None)"},
+                    {"type": "plain_text", "text": "test_user_1 reply"},
+                ],
+            },
+            {"type": "divider"},
             {
                 "type": "section",
                 "text": {
@@ -179,6 +196,17 @@ def slack_annotations():
 def search_annotations():
     return {
         "rows": [
+            {
+                "created": "2024-12-02T18:34:42.333087+00:00",
+                "user": "acct:test_user_1@hypothes.is",
+                "uri": "https://example.com/",
+                "text": "test_user_1 reply",
+                "document": {"title": ["Annotating the law | Hypothes.is"]},
+                "links": {
+                    "incontext": "https://hyp.is/test_annotation_id_1/example.com/"
+                },
+                "user_info": {"display_name": "md............................"},
+            },
             {
                 "created": "2024-12-03T18:40:42.325652+00:00",
                 "user": "acct:test_user_2@hypothes.is",
