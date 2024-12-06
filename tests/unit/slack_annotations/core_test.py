@@ -11,7 +11,8 @@ from src.slack_annotations.core import (
     _format_annotations,
     _get_search_after,
     _init_search_params,
-    _update_cache, notify,
+    _update_cache,
+    notify,
 )
 
 
@@ -34,6 +35,11 @@ def test_get_search_after(tmp_path):
     cache_path.write_text(json.dumps({"search_after": "2024-12-01T00:30:00+00:00"}))
 
     assert _get_search_after(str(cache_path), default) == search_after
+
+
+def test_get_search_after_without_cache():
+    default = "2024-12-01T00:00:00+00:00"
+    assert _get_search_after("", default) == default
 
 
 def test_update_cache(tmp_path):
@@ -63,7 +69,9 @@ def test_fetch_annotations(httpx_mock):
 
 
 def test_format_annotations(search_annotations, slack_annotations):
-    assert _format_annotations(search_annotations["rows"]) == json.dumps(slack_annotations)
+    assert _format_annotations(search_annotations["rows"]) == json.dumps(
+        slack_annotations
+    )
 
 
 @freeze_time("2024-12-01T01:00:00+00:00")
