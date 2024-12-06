@@ -23,61 +23,60 @@ def test_get_search_after_without_cache():
     assert _get_search_after("", default) == default
 
 
-@freeze_time("2024-12-01T01:00:00+00:00")
-def test_default_notify(search_annotations, slack_annotations, httpx_mock):
-    search_after = (datetime.now(UTC) - timedelta(hours=SEARCH_HOURS)).isoformat()
-    params = {
-        "sort": "created",
-        "order": "asc",
-        "search_after": search_after,
-    }
-    httpx_mock.add_response(
-        url=httpx.URL("https://hypothes.is/api/search", params=params),
-        content=json.dumps(search_annotations),
-    )
+class TestNotify:
+    @freeze_time("2024-12-01T01:00:00+00:00")
+    def test_default(self, search_annotations, slack_annotations, httpx_mock):
+        search_after = (datetime.now(UTC) - timedelta(hours=SEARCH_HOURS)).isoformat()
+        params = {
+            "sort": "created",
+            "order": "asc",
+            "search_after": search_after,
+        }
+        httpx_mock.add_response(
+            url=httpx.URL("https://hypothes.is/api/search", params=params),
+            content=json.dumps(search_annotations),
+        )
 
-    assert notify() == json.dumps(slack_annotations)
+        assert notify() == json.dumps(slack_annotations)
 
+    @freeze_time("2024-12-01T01:00:00+00:00")
+    def test_with_search_after_from_cache_file(
+        self, search_annotations, slack_annotations, httpx_mock, tmp_path
+    ):
+        search_after = "2024-12-01T00:30:00+00:00"
+        params = {
+            "sort": "created",
+            "order": "asc",
+            "search_after": search_after,
+        }
+        httpx_mock.add_response(
+            url=httpx.URL("https://hypothes.is/api/search", params=params),
+            content=json.dumps(search_annotations),
+        )
+        cache_path = tmp_path / "cache.json"
+        cache_path.write_text(json.dumps({"search_after": search_after}))
 
-@freeze_time("2024-12-01T01:00:00+00:00")
-def test_notify_with_search_after_from_cache_file(
-    search_annotations, slack_annotations, httpx_mock, tmp_path
-):
-    search_after = "2024-12-01T00:30:00+00:00"
-    params = {
-        "sort": "created",
-        "order": "asc",
-        "search_after": search_after,
-    }
-    httpx_mock.add_response(
-        url=httpx.URL("https://hypothes.is/api/search", params=params),
-        content=json.dumps(search_annotations),
-    )
-    cache_path = tmp_path / "cache.json"
-    cache_path.write_text(json.dumps({"search_after": search_after}))
+        assert notify(cache_path=str(cache_path)) == json.dumps(slack_annotations)
+        assert json.loads(cache_path.read_text()) == {
+            "search_after": "2024-12-03T18:40:42.325652+00:00"
+        }
 
-    assert notify(cache_path=str(cache_path)) == json.dumps(slack_annotations)
-    assert json.loads(cache_path.read_text()) == {
-        "search_after": "2024-12-03T18:40:42.325652+00:00"
-    }
+    @freeze_time("2024-12-01T01:00:00+00:00")
+    def test_with_token(self, search_annotations, slack_annotations, httpx_mock):
+        search_after = (datetime.now(UTC) - timedelta(hours=SEARCH_HOURS)).isoformat()
+        params = {
+            "sort": "created",
+            "order": "asc",
+            "search_after": search_after,
+        }
+        token = "test-token"
+        httpx_mock.add_response(
+            url=httpx.URL("https://hypothes.is/api/search", params=params),
+            content=json.dumps(search_annotations),
+            match_headers={"Authorization": f"Bearer {token}"},
+        )
 
-
-@freeze_time("2024-12-01T01:00:00+00:00")
-def test_notify_with_token(search_annotations, slack_annotations, httpx_mock):
-    search_after = (datetime.now(UTC) - timedelta(hours=SEARCH_HOURS)).isoformat()
-    params = {
-        "sort": "created",
-        "order": "asc",
-        "search_after": search_after,
-    }
-    token = "test-token"
-    httpx_mock.add_response(
-        url=httpx.URL("https://hypothes.is/api/search", params=params),
-        content=json.dumps(search_annotations),
-        match_headers={"Authorization": f"Bearer {token}"},
-    )
-
-    assert notify(token=token) == json.dumps(slack_annotations)
+        assert notify(token=token) == json.dumps(slack_annotations)
 
 
 def test_get_quote_without_exact():
