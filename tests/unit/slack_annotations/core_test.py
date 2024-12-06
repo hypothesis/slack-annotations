@@ -90,6 +90,29 @@ def test_default_notify(search_annotations, slack_annotations, httpx_mock):
     assert notify() == json.dumps(slack_annotations)
 
 
+@freeze_time("2024-12-01T01:00:00+00:00")
+def test_notify_with_search_after_from_cache_file(
+    search_annotations, slack_annotations, httpx_mock, tmp_path
+):
+    search_after = "2024-12-01T00:30:00+00:00"
+    params = {
+        "sort": "created",
+        "order": "asc",
+        "search_after": search_after,
+    }
+    httpx_mock.add_response(
+        url=httpx.URL("https://hypothes.is/api/search", params=params),
+        content=json.dumps(search_annotations),
+    )
+    cache_path = tmp_path / "cache.json"
+    cache_path.write_text(json.dumps({"search_after": search_after}))
+
+    assert notify(cache_path=str(cache_path)) == json.dumps(slack_annotations)
+    assert json.loads(cache_path.read_text()) == {
+        "search_after": "2024-12-02T18:34:42.333087+00:00"
+    }
+
+
 @pytest.fixture
 def slack_annotations():
     return {
