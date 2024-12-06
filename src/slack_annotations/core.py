@@ -61,6 +61,7 @@ def _maybe_update_cache(
 ) -> None:
     if not annotations or not cache_path:
         return
+
     search_after = annotations[-1]["created"]
     with open(cache_path, "w", encoding="utf-8") as f:
         json.dump({"search_after": search_after}, f)
