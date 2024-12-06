@@ -5,7 +5,7 @@ import httpx
 import pytest
 from freezegun import freeze_time
 
-from src.slack_annotations.core import (
+from slack_annotations.core import (
     SEARCH_HOURS,
     _fetch_annotations,
     _format_annotations,
