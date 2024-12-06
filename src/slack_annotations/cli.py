@@ -5,7 +5,7 @@ from importlib.metadata import version
 from slack_annotations.core import notify
 
 
-def cli(argv=None):  # pragma: no cover
+def cli(argv=None):
     parser = ArgumentParser()
     parser.add_argument(
         "-v",
