@@ -138,9 +138,11 @@ def test_trim_long_text():
 
 
 def test_get_tex_with_empty_text():
-    annotation = {}
+    assert _get_text({}) == NONE_TEXT
 
-    assert _get_text(annotation) == NONE_TEXT
+
+def test_format_empty_annotations():
+    assert _format_annotations([]) == ""
 
 
 @pytest.fixture
