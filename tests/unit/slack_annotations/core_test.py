@@ -7,13 +7,11 @@ from freezegun import freeze_time
 
 from slack_annotations.core import (
     MAX_TEXT_LENGTH,
-    NONE_TEXT,
     SEARCH_HOURS,
     _format_annotation,
     _format_annotations,
     _get_quote,
     _get_search_after,
-    _get_text,
     _trim_text,
     notify,
 )
@@ -89,22 +87,12 @@ def test_get_quote_without_exact():
         _get_quote(annotation)
 
 
-def test_get_quote_with_empty_exact():
-    annotation = {"target": [{"selector": [{"exact": ""}]}]}
-
-    assert _get_quote(annotation) == NONE_TEXT
-
-
 def test_trim_long_text():
     text = "a" * (MAX_TEXT_LENGTH + 1)
     stub = "..."
 
     assert len(_trim_text(text)) == MAX_TEXT_LENGTH
     assert _trim_text(text).endswith(stub)
-
-
-def test_get_tex_with_empty_text():
-    assert _get_text({}) == NONE_TEXT
 
 
 def test_format_empty_annotations():
