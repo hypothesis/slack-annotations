@@ -9,75 +9,20 @@ from slack_annotations.core import (
     MAX_TEXT_LENGTH,
     NONE_TEXT,
     SEARCH_HOURS,
-    _fetch_annotations,
     _format_annotation,
     _format_annotations,
     _get_quote,
     _get_search_after,
     _get_text,
-    _init_search_params,
     _trim_text,
-    _update_cache,
     notify,
 )
 
 
-@freeze_time("2024-12-01T01:00:00+00:00")
-def test_init_search_params():
-    params = _init_search_params({"some_key": "some_value"})
-
-    assert params == {
-        "some_key": "some_value",
-        "sort": "created",
-        "order": "asc",
-        "search_after": (datetime.now(UTC) - timedelta(hours=SEARCH_HOURS)).isoformat(),
-    }
-
-
-def test_get_search_after(tmp_path):
-    cache_path = tmp_path / "cache.json"
-    default = "2024-12-01T00:00:00+00:00"
-    search_after = "2024-12-01T00:30:00+00:00"
-    cache_path.write_text(json.dumps({"search_after": "2024-12-01T00:30:00+00:00"}))
-
-    assert _get_search_after(str(cache_path), default) == search_after
-
-
 def test_get_search_after_without_cache():
     default = "2024-12-01T00:00:00+00:00"
+
     assert _get_search_after("", default) == default
-
-
-def test_update_cache(tmp_path):
-    cache_path = tmp_path / "cache.json"
-    search_after = "2024-12-01T00:30:00+00:00"
-
-    _update_cache(str(cache_path), search_after)
-
-    with open(cache_path, "r", encoding="utf-8") as f:
-        data = json.load(f)
-    assert data["search_after"] == search_after
-
-
-def test_fetch_annotations(httpx_mock):
-    annotations = {"rows": [{"id": 1, "created": "2024-12-01T00:00:00+00:00"}]}
-    params = {"param1": "value1"}
-    headers = {"Authorization": "Bearer test_token"}
-    httpx_mock.add_response(
-        url=httpx.URL("https://hypothes.is/api/search", params=params),
-        content=json.dumps(annotations),
-        match_headers=headers,
-    )
-
-    result = _fetch_annotations(params, headers)
-
-    assert result == annotations["rows"]
-
-
-def test_format_annotations(search_annotations, slack_annotations):
-    assert _format_annotations(search_annotations["rows"]) == json.dumps(
-        slack_annotations
-    )
 
 
 @freeze_time("2024-12-01T01:00:00+00:00")
@@ -119,6 +64,24 @@ def test_notify_with_search_after_from_cache_file(
     }
 
 
+@freeze_time("2024-12-01T01:00:00+00:00")
+def test_notify_with_token(search_annotations, slack_annotations, httpx_mock):
+    search_after = (datetime.now(UTC) - timedelta(hours=SEARCH_HOURS)).isoformat()
+    params = {
+        "sort": "created",
+        "order": "asc",
+        "search_after": search_after,
+    }
+    token = "test-token"
+    httpx_mock.add_response(
+        url=httpx.URL("https://hypothes.is/api/search", params=params),
+        content=json.dumps(search_annotations),
+        match_headers={"Authorization": f"Bearer {token}"},
+    )
+
+    assert notify(token=token) == json.dumps(slack_annotations)
+
+
 def test_get_quote_without_exact():
     annotation = {"target": [{"selector": []}]}
 
@@ -135,6 +98,7 @@ def test_get_quote_with_empty_exact():
 def test_trim_long_text():
     text = "a" * (MAX_TEXT_LENGTH + 1)
     stub = "..."
+
     assert len(_trim_text(text)) == MAX_TEXT_LENGTH
     assert _trim_text(text).endswith(stub)
 
