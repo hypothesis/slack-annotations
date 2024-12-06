@@ -16,7 +16,7 @@ from slack_annotations.core import (
     _init_search_params,
     _trim_text,
     _update_cache,
-    notify,
+    notify, _get_text,
 )
 
 
@@ -135,6 +135,12 @@ def test_trim_long_text():
     stub = "..."
     assert len(_trim_text(text)) == MAX_TEXT_LENGTH
     assert _trim_text(text).endswith(stub)
+
+
+def test_get_tex_with_empty_text():
+    annotation = {}
+
+    assert _get_text(annotation) == NONE_TEXT
 
 
 @pytest.fixture
