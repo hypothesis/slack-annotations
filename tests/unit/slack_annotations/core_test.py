@@ -2,11 +2,13 @@ import json
 from datetime import UTC, datetime, timedelta
 
 import httpx
+import pytest
 from freezegun import freeze_time
 
 from src.slack_annotations.core import (
     SEARCH_HOURS,
     _fetch_annotations,
+    _format_annotations,
     _get_search_after,
     _init_search_params,
     _update_cache,
@@ -58,3 +60,58 @@ def test_fetch_annotations(httpx_mock):
     result = _fetch_annotations(params, headers)
 
     assert result == annotations["rows"]
+
+
+def test_format_annotations(search_annotations, slack_annotations):
+    result = _format_annotations(search_annotations)
+    assert result == json.dumps(slack_annotations)
+
+
+@pytest.fixture
+def slack_annotations():
+    return {
+        "text": "A new annotation was posted",
+        "blocks": [
+            {
+                "type": "section",
+                "text": {
+                    "type": "mrkdwn",
+                    "text": "`test_user_1` (md............................) annotated <https://example.com/|Annotating the law | Hypothes.is>:",
+                },
+                "fields": [
+                    {"type": "mrkdwn", "text": "*Quote:*"},
+                    {
+                        "type": "mrkdwn",
+                        "text": "*Annotation* (<https://hyp.is/test_annotation_id_1/example.com/|in-context link>):",
+                    },
+                    {"type": "plain_text", "text": "(None)"},
+                    {"type": "plain_text", "text": "test_user_1 reply"},
+                ],
+            },
+            {"type": "divider"},
+            {
+                "type": "context",
+                "elements": [
+                    {
+                        "type": "mrkdwn",
+                        "text": "These annotations are posted to Slack by a <https://github.com/hypothesis/slack-annotations/|GitHub Actions workflow>",
+                    }
+                ],
+            },
+        ],
+    }
+
+
+@pytest.fixture
+def search_annotations():
+    return [
+        {
+            "created": "2024-12-02T18:34:42.333087+00:00",
+            "user": "acct:test_user_1@hypothes.is",
+            "uri": "https://example.com/",
+            "text": "test_user_1 reply",
+            "document": {"title": ["Annotating the law | Hypothes.is"]},
+            "links": {"incontext": "https://hyp.is/test_annotation_id_1/example.com/"},
+            "user_info": {"display_name": "md............................"},
+        }
+    ]
