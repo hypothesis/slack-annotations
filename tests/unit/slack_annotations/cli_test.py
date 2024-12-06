@@ -1,3 +1,4 @@
+import json
 from importlib.metadata import version
 
 import pytest
@@ -28,4 +29,16 @@ def test_default(capsys, mocker):
     cli([])
 
     notify.assert_called_once_with(None, None, None)
+    assert capsys.readouterr().out.strip() == notify_output
+
+
+def test_search_params(capsys, mocker):
+    notify = mocker.patch("slack_annotations.cli.notify")
+    notify_output = "Test notify output"
+    notify.return_value = notify_output
+
+    search_params = {"some_key": "some_value"}
+    cli(["--search-params", json.dumps(search_params)])
+
+    notify.assert_called_once_with(search_params, None, None)
     assert capsys.readouterr().out.strip() == notify_output
