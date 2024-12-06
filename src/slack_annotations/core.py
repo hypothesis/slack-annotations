@@ -6,6 +6,7 @@ import httpx
 
 SEARCH_HOURS = 1
 MAX_TEXT_LENGTH = 2000
+NONE_TEXT = "(None)"
 
 
 def notify(
@@ -81,10 +82,8 @@ def _format_annotation(annotation: dict[str, Any]) -> dict[str, Any]:
 def _get_quote(annotation: dict[str, Any]) -> str:
     for target in annotation["target"]:
         for selector in target["selector"]:
-            if exact := selector.get("exact"):
-                if not exact:
-                    exact = "(None)"
-                return _trim_text(exact)
+            exact = selector.get("exact") or NONE_TEXT
+            return _trim_text(exact)
     raise ValueError()
 
 
@@ -98,7 +97,7 @@ def _trim_text(text: str) -> str:
 def _get_text(annotation: dict[str, Any]) -> str:
     text = annotation.get("text", None)
     if not text:
-        text = "(None)"
+        text = NONE_TEXT
     return _trim_text(text)
 
 
@@ -150,7 +149,7 @@ def _build_annotation_fields(annotation: dict[str, Any]) -> list[dict[str, Any]]
     try:
         quote = _get_quote(annotation)
     except Exception:  # pylint:disable=broad-exception-caught
-        quote = "(None)"
+        quote = NONE_TEXT
 
     return [
         {"type": "mrkdwn", "text": "*Quote:*"},

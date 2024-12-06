@@ -7,6 +7,7 @@ from freezegun import freeze_time
 
 from slack_annotations.core import (
     MAX_TEXT_LENGTH,
+    NONE_TEXT,
     SEARCH_HOURS,
     _fetch_annotations,
     _format_annotations,
@@ -117,10 +118,16 @@ def test_notify_with_search_after_from_cache_file(
 
 
 def test_get_quote_without_exact():
-    annotation = {"target": [{"selector": [{}]}]}
+    annotation = {"target": [{"selector": []}]}
 
     with pytest.raises(ValueError):
         _get_quote(annotation)
+
+
+def test_get_quote_with_empty_exact():
+    annotation = {"target": [{"selector": [{"exact": ""}]}]}
+
+    assert _get_quote(annotation) == NONE_TEXT
 
 
 def test_trim_long_text():
