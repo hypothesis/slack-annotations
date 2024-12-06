@@ -17,10 +17,14 @@ from slack_annotations.core import (
 )
 
 
-def test_get_search_after_without_cache():
-    default = "2024-12-01T00:00:00+00:00"
+class TestGetSearchAfter:
+    @freeze_time("2024-12-01T01:00:00+00:00")
+    def test_without_cache(self):
+        assert _get_search_after() == "2024-12-01T00:00:00+00:00"
 
-    assert _get_search_after("", default) == default
+    @freeze_time("2024-12-01T01:00:00+00:00")
+    def test_with_fake_file(self):
+        assert _get_search_after("fake_cache.json") == "2024-12-01T00:00:00+00:00"
 
 
 class TestNotify:

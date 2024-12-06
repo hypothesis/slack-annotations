@@ -21,7 +21,6 @@ def test_version(capsys):
     assert not exc_info.value.code
 
 
-
 def test_default(capsys, notify):
     notify.return_value = "Test notify output"
 

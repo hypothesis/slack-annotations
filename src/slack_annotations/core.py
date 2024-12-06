@@ -33,13 +33,9 @@ def _make_search_params(
         {
             "sort": "created",
             "order": "asc",
-            "search_after": (
-                datetime.now(UTC) - timedelta(hours=SEARCH_HOURS)
-            ).isoformat(),
+            "search_after": _get_search_after(cache_path),
         }
     )
-    if cache_path:
-        params["search_after"] = _get_search_after(cache_path, params["search_after"])
     return params
 
 
@@ -47,7 +43,11 @@ def _make_headers(token: str | None = None) -> dict[str, str]:
     return {"Authorization": f"Bearer {token}"} if token else {}
 
 
-def _get_search_after(cache_path: str, default: str) -> str:
+def _get_search_after(cache_path: str | None = None) -> str:
+    default = (datetime.now(UTC) - timedelta(hours=SEARCH_HOURS)).isoformat()
+    if not cache_path:
+        return default
+
     try:
         with open(cache_path, "r", encoding="utf-8") as f:
             return max(default, json.load(f)["search_after"])
