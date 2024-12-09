@@ -1,85 +1,57 @@
-import json
-from datetime import UTC, datetime, timedelta
-
-import httpx
 import pytest
-from freezegun import freeze_time
 
-from slack_annotations.core import SEARCH_HOURS, _get_search_after, notify
-
-
-class TestGetSearchAfter:
-    @freeze_time("2024-12-01T01:00:00+00:00")
-    def test_without_cache(self):
-        assert _get_search_after() == "2024-12-01T00:00:00+00:00"
-
-    @freeze_time("2024-12-01T01:00:00+00:00")
-    def test_with_fake_file(self):
-        assert _get_search_after("fake_cache.json") == "2024-12-01T00:00:00+00:00"
-
-    @freeze_time("2024-12-01T01:00:00+00:00")
-    def test_with_cache(self, tmp_path):
-        cache_path = tmp_path / "cache.json"
-        search_after = "2024-12-01T00:30:00+00:00"
-        cache_path.write_text(json.dumps({"search_after": search_after}))
-
-        assert _get_search_after(str(cache_path)) == search_after
+from slack_annotations.format import (
+    MAX_TEXT_LENGTH,
+    _format_annotation,
+    _get_quote,
+    _trim_text,
+    format_annotations,
+)
 
 
-class TestNotify:
-    @freeze_time("2024-12-01T01:00:00+00:00")
-    def test_default(self, search_annotations, slack_annotations, httpx_mock):
-        search_after = (datetime.now(UTC) - timedelta(hours=SEARCH_HOURS)).isoformat()
-        params = {
-            "sort": "created",
-            "order": "asc",
-            "search_after": search_after,
-        }
-        httpx_mock.add_response(
-            url=httpx.URL("https://hypothes.is/api/search", params=params),
-            content=json.dumps(search_annotations),
-        )
+def test_get_quote_without_exact():
+    annotation = {"target": [{"selector": []}]}
 
-        assert notify() == json.dumps(slack_annotations)
+    with pytest.raises(ValueError):
+        _get_quote(annotation)
 
-    @freeze_time("2024-12-01T01:00:00+00:00")
-    def test_with_search_after_from_cache_file(
-        self, search_annotations, slack_annotations, httpx_mock, tmp_path
-    ):
-        search_after = "2024-12-01T00:30:00+00:00"
-        params = {
-            "sort": "created",
-            "order": "asc",
-            "search_after": search_after,
-        }
-        httpx_mock.add_response(
-            url=httpx.URL("https://hypothes.is/api/search", params=params),
-            content=json.dumps(search_annotations),
-        )
-        cache_path = tmp_path / "cache.json"
-        cache_path.write_text(json.dumps({"search_after": search_after}))
 
-        assert notify(cache_path=str(cache_path)) == json.dumps(slack_annotations)
-        assert json.loads(cache_path.read_text()) == {
-            "search_after": "2024-12-03T18:40:42.325652+00:00"
-        }
+def test_trim_long_text():
+    text = "a" * (MAX_TEXT_LENGTH + 1)
+    stub = "..."
 
-    @freeze_time("2024-12-01T01:00:00+00:00")
-    def test_with_token(self, search_annotations, slack_annotations, httpx_mock):
-        search_after = (datetime.now(UTC) - timedelta(hours=SEARCH_HOURS)).isoformat()
-        params = {
-            "sort": "created",
-            "order": "asc",
-            "search_after": search_after,
-        }
-        token = "test-token"
-        httpx_mock.add_response(
-            url=httpx.URL("https://hypothes.is/api/search", params=params),
-            content=json.dumps(search_annotations),
-            match_headers={"Authorization": f"Bearer {token}"},
-        )
+    assert len(_trim_text(text)) == MAX_TEXT_LENGTH
+    assert _trim_text(text).endswith(stub)
 
-        assert notify(token=token) == json.dumps(slack_annotations)
+
+def test_format_empty_annotations():
+    assert not format_annotations([])
+
+
+def test_format_annotation_without_title():
+    annotation = {
+        "user": "acct:test_user_1@hypothes.is",
+        "uri": "https://example.com/",
+        "links": {"incontext": "https://hyp.is/test_annotation_id_1/example.com/"},
+        "user_info": {"display_name": "md............................"},
+    }
+
+    assert _format_annotation(annotation) == {
+        "type": "section",
+        "text": {
+            "type": "mrkdwn",
+            "text": "`test_user_1` (md............................) annotated https://example.com/:",
+        },
+        "fields": [
+            {"type": "mrkdwn", "text": "*Quote:*"},
+            {
+                "type": "mrkdwn",
+                "text": "*Annotation* (<https://hyp.is/test_annotation_id_1/example.com/|in-context link>):",
+            },
+            {"type": "plain_text", "text": "(None)"},
+            {"type": "plain_text", "text": "(None)"},
+        ],
+    }
 
 
 @pytest.fixture
