@@ -6,8 +6,8 @@ NONE_TEXT = "(None)"
 
 
 def _format_annotation(annotation: dict[str, Any]) -> dict[str, Any]:
-    fields = _build_annotation_fields(annotation)
     summary = _build_annotation_summary(annotation)
+    fields = _build_annotation_fields(annotation)
     return {
         "type": "section",
         "text": {"type": "mrkdwn", "text": summary},
