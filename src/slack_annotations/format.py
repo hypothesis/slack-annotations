@@ -95,11 +95,11 @@ def _build_annotation_fields(annotation: dict[str, Any]) -> list[dict[str, Any]]
     if quote:
         fields = [
             {"type": "mrkdwn", "text": "*Quote:*"},
-            {"type": "plain_text", "text": quote or NONE_TEXT},
             {
                 "type": "mrkdwn",
                 "text": f"*Annotation* (<{incontext_link}|in-context link>):",
             },
+            {"type": "plain_text", "text": quote or NONE_TEXT},
         ]
     else:
         fields = [
