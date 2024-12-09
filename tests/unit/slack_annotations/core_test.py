@@ -112,12 +112,12 @@ def slack_annotations():
                 "fields": [
                     {"type": "mrkdwn", "text": "*Quote:*"},
                     {
-                        "type": "mrkdwn",
-                        "text": "*Annotation* (<https://hyp.is/test_annotation_id_2/web.hypothes.is/blog/step-by-step-guide-to-using-hypothesis-for-collaborative-projects/|in-context link>):",
-                    },
-                    {
                         "type": "plain_text",
                         "text": "The ability to collaborate effectively is invaluable in today\u2019s interconnected world. Whether in academic or professional settings, tools that streamline communication, enhance content sharing and promote open dialogue are important. Hypothesis is a standout tool in this regard, especially renowned for its capabilities in group annotations and as an online learning tool.",
+                    },
+                    {
+                        "type": "mrkdwn",
+                        "text": "*Annotation* (<https://hyp.is/test_annotation_id_2/web.hypothes.is/blog/step-by-step-guide-to-using-hypothesis-for-collaborative-projects/|in-context link>):",
                     },
                     {"type": "plain_text", "text": "A useful tool!"},
                 ],
