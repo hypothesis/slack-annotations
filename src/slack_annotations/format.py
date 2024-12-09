@@ -18,8 +18,8 @@ def _format_annotation(annotation: dict[str, Any]) -> dict[str, Any]:
 def _get_quote(annotation: dict[str, Any]) -> str:
     for target in annotation["target"]:
         for selector in target["selector"]:
-            exact = selector.get("exact") or NONE_TEXT
-            return _trim_text(exact)
+            if exact := selector.get("exact"):
+                return _trim_text(exact)
     raise ValueError()
 
 
