@@ -60,13 +60,14 @@ class TestFormatAnnotation:
             "uri": "https://example.com/",
             "links": {"incontext": "https://hyp.is/test_annotation_id_1/example.com/"},
             "user_info": {"display_name": None},
+            "document": {"title": ["Example annotation"]},
         }
 
         assert _format_annotation(annotation) == {
             "type": "section",
             "text": {
                 "type": "mrkdwn",
-                "text": "`test_user_1` annotated https://example.com/:",
+                "text": "`test_user_1` annotated <https://example.com/|Example annotation>:",
             },
             "fields": [
                 {"type": "mrkdwn", "text": "*Quote:*"},
