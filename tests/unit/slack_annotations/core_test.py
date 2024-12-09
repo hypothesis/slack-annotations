@@ -40,8 +40,7 @@ class TestNotify:
             content=json.dumps(search_annotations),
         )
 
-        s1 = notify()
-        assert s1 == json.dumps(slack_annotations)
+        assert notify() == json.dumps(slack_annotations)
 
     @freeze_time("2024-12-01T01:00:00+00:00")
     def test_with_search_after_from_cache_file(
