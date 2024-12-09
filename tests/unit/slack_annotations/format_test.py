@@ -9,11 +9,24 @@ from slack_annotations.format import (
 )
 
 
-def test_get_quote_without_exact():
-    annotation = {"target": [{"selector": []}]}
+class TestGetQuote:
+    def test_without_exact(self):
+        annotation = {"target": [{"selector": []}]}
 
-    with pytest.raises(ValueError):
-        _get_quote(annotation)
+        with pytest.raises(ValueError):
+            _get_quote(annotation)
+
+    def test_with_exact(self):
+        exact = "test_exact"
+        annotation = {"target": [{"selector": [{"exact": exact}]}]}
+
+        assert _get_quote(annotation) == exact
+
+    def test_with_exact_multiple_selectors(self):
+        exact = "test_exact"
+        annotation = {"target": [{"selector": [{}, {"exact": exact}]}]}
+
+        assert _get_quote(annotation) == exact
 
 
 def test_trim_long_text():
@@ -29,7 +42,7 @@ def test_format_empty_annotations():
 
 
 class TestFormatAnnotation:
-    def test_without_title(self):
+    def test_page_note_without_title(self):
         annotation = {
             "user": "acct:test_user_1@hypothes.is",
             "uri": "https://example.com/",
@@ -44,12 +57,10 @@ class TestFormatAnnotation:
                 "text": "`test_user_1` annotated https://example.com/:",
             },
             "fields": [
-                {"type": "mrkdwn", "text": "*Quote:*"},
                 {
                     "type": "mrkdwn",
-                    "text": "*Annotation* (<https://hyp.is/test_annotation_id_1/example.com/|in-context link>):",
+                    "text": "*Page Note* (<https://hyp.is/test_annotation_id_1/example.com/|in-context link>):",
                 },
-                {"type": "plain_text", "text": "(None)"},
                 {"type": "plain_text", "text": "(None)"},
             ],
         }
