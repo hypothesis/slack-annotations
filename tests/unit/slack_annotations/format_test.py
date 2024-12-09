@@ -60,7 +60,7 @@ class TestFormatAnnotation:
                 {
                     "type": "mrkdwn",
                     "text": "*Page Note* (<https://hyp.is/test_annotation_id_1/example.com/|in-context link>):",
-                },
+            },
                 {"type": "plain_text", "text": "(None)"},
             ],
         }
