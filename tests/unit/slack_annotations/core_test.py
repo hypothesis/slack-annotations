@@ -40,7 +40,8 @@ class TestNotify:
             content=json.dumps(search_annotations),
         )
 
-        assert notify() == json.dumps(slack_annotations)
+        s1 = notify()
+        assert s1 == json.dumps(slack_annotations)
 
     @freeze_time("2024-12-01T01:00:00+00:00")
     def test_with_search_after_from_cache_file(
@@ -94,12 +95,10 @@ def slack_annotations():
                     "text": "`test_user_1` (md............................) annotated <https://example.com/|Annotating the law | Hypothes.is>:",
                 },
                 "fields": [
-                    {"type": "mrkdwn", "text": "*Quote:*"},
                     {
                         "type": "mrkdwn",
-                        "text": "*Annotation* (<https://hyp.is/test_annotation_id_1/example.com/|in-context link>):",
+                        "text": "*Page Note* (<https://hyp.is/test_annotation_id_1/example.com/|in-context link>):",
                     },
-                    {"type": "plain_text", "text": "(None)"},
                     {"type": "plain_text", "text": "test_user_1 reply"},
                 ],
             },

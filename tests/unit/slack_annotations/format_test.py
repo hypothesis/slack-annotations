@@ -44,12 +44,10 @@ class TestFormatAnnotation:
                 "text": "`test_user_1` annotated https://example.com/:",
             },
             "fields": [
-                {"type": "mrkdwn", "text": "*Quote:*"},
                 {
                     "type": "mrkdwn",
-                    "text": "*Annotation* (<https://hyp.is/test_annotation_id_1/example.com/|in-context link>):",
-                },
-                {"type": "plain_text", "text": "(None)"},
+                    "text": "*Page Note* (<https://hyp.is/test_annotation_id_1/example.com/|in-context link>):",
+            },
                 {"type": "plain_text", "text": "(None)"},
             ],
         }
