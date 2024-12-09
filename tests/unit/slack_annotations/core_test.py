@@ -24,6 +24,14 @@ class TestGetSearchAfter:
     def test_with_fake_file(self):
         assert _get_search_after("fake_cache.json") == "2024-12-01T00:00:00+00:00"
 
+    @freeze_time("2024-12-01T01:00:00+00:00")
+    def test_with_cache(self, tmp_path):
+        cache_path = tmp_path / "cache.json"
+        search_after = "2024-12-01T00:30:00+00:00"
+        cache_path.write_text(json.dumps({"search_after": search_after}))
+
+        assert _get_search_after(str(cache_path)) == search_after
+
 
 class TestNotify:
     @freeze_time("2024-12-01T01:00:00+00:00")
