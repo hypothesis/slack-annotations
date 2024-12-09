@@ -1,2 +1,2 @@
-lint,functests: pytest-httpx
-lint,functests: freezegun
+lint,tests,functests: pytest-httpx
+lint,tests,functests: freezegun
