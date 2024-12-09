@@ -42,7 +42,7 @@ def test_format_empty_annotations():
 
 
 class TestFormatAnnotation:
-    def test_without_title(self):
+    def test_page_note_without_title(self):
         annotation = {
             "user": "acct:test_user_1@hypothes.is",
             "uri": "https://example.com/",
