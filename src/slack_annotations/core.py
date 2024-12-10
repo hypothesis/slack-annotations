@@ -1,135 +1,78 @@
 import json
 from datetime import UTC, datetime, timedelta
+from typing import Any
 
 import httpx
+
+from .format import format_annotations
 
 SEARCH_HOURS = 1
 
 
 def notify(
-    search_params=None, token=None, cache_path=None
-):  # pylint:disable=too-complex,too-many-statements # pragma:no cover
+    search_params: dict[str, Any] | None = None,
+    token: str | None = None,
+    cache_path: str | None = None,
+) -> str:
+    search_params = _make_search_params(search_params, cache_path)
+    headers = _make_headers(token)
 
-    search_params = search_params or {}
+    annotations = _fetch_annotations(search_params, headers)
 
+    _maybe_update_cache(annotations, cache_path)
+    return format_annotations(annotations)
+
+
+def _make_search_params(
+    params: dict[str, Any] | None = None, cache_path: str | None = None
+) -> dict[str, Any]:
     # Deliberately override any given sort or order param as these specific
     # values are needed for the algorithm below to work.
-    search_params["sort"] = "created"
-    search_params["order"] = "asc"
-    search_params["search_after"] = (
-        datetime.now(UTC) - timedelta(hours=SEARCH_HOURS)
-    ).isoformat()
+    default_params = {
+        "sort": "created",
+        "order": "asc",
+        "search_after": _get_search_after(cache_path),
+    }
+    if params:
+        default_params.update(params)
+    return default_params
 
-    if cache_path:
-        try:
-            with open(cache_path, "r", encoding="utf-8") as cache_file:
-                search_params["search_after"] = max(
-                    search_params["search_after"], json.load(cache_file)["search_after"]
-                )
-        except FileNotFoundError:
-            pass
 
-    headers = {}
+def _make_headers(token: str | None = None) -> dict[str, str]:
+    return {"Authorization": f"Bearer {token}"} if token else {}
 
-    if token:
-        headers["Authorization"] = f"Bearer {token}"
 
-    annotations = (
-        httpx.get(
-            "https://hypothes.is/api/search", params=search_params, headers=headers
-        )
+def _get_search_after(cache_path: str | None = None) -> str:
+    """Return the search_after value from the cache file or the default."""
+    default = (datetime.now(UTC) - timedelta(hours=SEARCH_HOURS)).isoformat()
+
+    if not cache_path:
+        return default
+
+    try:
+        with open(cache_path, "r", encoding="utf-8") as f:
+            return max(default, json.load(f)["search_after"])
+    except FileNotFoundError:
+        return default
+
+
+def _maybe_update_cache(
+    annotations: list[dict[str, Any]], cache_path: str | None = None
+) -> None:
+    """Update the cache file with created timestamp of the last annotation."""
+    if not annotations or not cache_path:
+        return
+
+    search_after = annotations[-1]["created"]
+    with open(cache_path, "w", encoding="utf-8") as f:
+        json.dump({"search_after": search_after}, f)
+
+
+def _fetch_annotations(
+    params: dict[str, Any], headers: dict[str, str]
+) -> list[dict[str, Any]]:
+    return (
+        httpx.get("https://hypothes.is/api/search", params=params, headers=headers)
         .raise_for_status()
         .json()["rows"]
     )
-
-    if annotations and cache_path:
-        with open(cache_path, "w", encoding="utf-8") as cache_file:
-            json.dump({"search_after": annotations[-1]["created"]}, cache_file)
-
-    def format_annotation(annotation):
-        def get_quote(annotation):
-            for target in annotation["target"]:
-                for selector in target["selector"]:
-                    if exact := selector.get("exact"):
-                        if not exact:
-                            exact = "(None)"
-                        if len(exact) > 2000:
-                            exact = exact[:1997] + "..."
-                        return exact
-
-            raise ValueError()
-
-        def get_text(annotation):
-            text = annotation.get("text", None)
-
-            if not text:
-                text = "(None)"
-
-            if len(text) > 2000:
-                text = text[:1997] + "..."
-            return text
-
-        try:
-            quote = get_quote(annotation)
-        except:  # pylint:disable=bare-except
-            quote = "(None)"
-
-        try:
-            title = annotation["document"]["title"][0]
-        except:  # pylint:disable=bare-except
-            title = None
-
-        fields = [
-            {"type": "mrkdwn", "text": "*Quote:*"},
-            {
-                "type": "mrkdwn",
-                "text": f"*Annotation* (<{annotation['links']['incontext']}|in-context link>):",
-            },
-            {"type": "plain_text", "text": quote},
-            {"type": "plain_text", "text": get_text(annotation)},
-        ]
-
-        display_name = annotation["user_info"]["display_name"]
-        username = annotation["user"].split(":")[1].split("@")[0]
-        uri = annotation["uri"]
-
-        if title:
-            document_link = f"<{uri}|{title}>"
-        else:
-            document_link = uri
-
-        summary = f"`{username}` ({display_name}) annotated {document_link}:"
-
-        return {
-            "type": "section",
-            "text": {"type": "mrkdwn", "text": summary},
-            "fields": fields,
-        }
-
-    if annotations:
-        if len(annotations) == 1:
-            summary = "A new annotation was posted"
-        else:
-            summary = f"{len(annotations)} new annotations"
-
-        blocks = []
-
-        for annotation in annotations:
-            blocks.append(format_annotation(annotation))
-            blocks.append({"type": "divider"})
-
-        blocks.append(
-            {
-                "type": "context",
-                "elements": [
-                    {
-                        "type": "mrkdwn",
-                        "text": "These annotations are posted to Slack by a <https://github.com/hypothesis/slack-annotations/|GitHub Actions workflow>",
-                    },
-                ],
-            }
-        )
-
-        return json.dumps({"text": summary, "blocks": blocks})
-
-    return ""
