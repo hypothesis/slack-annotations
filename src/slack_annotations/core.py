@@ -28,14 +28,14 @@ def _make_search_params(
 ) -> dict[str, Any]:
     # Deliberately override any given sort or order param as these specific
     # values are needed for the algorithm below to work.
-    new_params = {
+    default_params = {
         "sort": "created",
         "order": "asc",
         "search_after": _get_search_after(cache_path),
     }
     if params:
-        new_params.update(params)
-    return new_params
+        default_params.update(params)
+    return default_params
 
 
 def _make_headers(token: str | None = None) -> dict[str, str]:
