@@ -20,7 +20,7 @@ class TestGetSearchAfter:
         assert _get_search_after() == "2024-12-01T00:00:00+00:00"
 
     @freeze_time("2024-12-01T01:00:00+00:00")
-    def test_with_fake_file(self):
+    def test_when_cache_file_doesnt_exist(self):
         assert _get_search_after("fake_cache.json") == "2024-12-01T00:00:00+00:00"
 
     @freeze_time("2024-12-01T01:00:00+00:00")
