@@ -9,11 +9,24 @@ from slack_annotations.format import (
 )
 
 
-def test_get_quote_without_exact():
-    annotation = {"target": [{"selector": []}]}
+class TestGetQuote:
+    def test_without_exact(self):
+        annotation = {"target": [{"selector": []}]}
 
-    with pytest.raises(ValueError):
-        _get_quote(annotation)
+        with pytest.raises(ValueError):
+            _get_quote(annotation)
+
+    def test_with_exact(self):
+        exact = "test_exact"
+        annotation = {"target": [{"selector": [{"exact": exact}]}]}
+
+        assert _get_quote(annotation) == exact
+
+    def test_with_exact_multiple_selectors(self):
+        exact = "test_exact"
+        annotation = {"target": [{"selector": [{}, {"exact": exact}]}]}
+
+        assert _get_quote(annotation) == exact
 
 
 def test_trim_long_text():
