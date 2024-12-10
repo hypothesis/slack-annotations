@@ -53,8 +53,7 @@ def _get_search_after(cache_path: str | None = None) -> str:
         with open(cache_path, "r", encoding="utf-8") as f:
             return max(default, json.load(f)["search_after"])
     except FileNotFoundError:
-        pass
-    return default
+        return default
 
 
 def _maybe_update_cache(
