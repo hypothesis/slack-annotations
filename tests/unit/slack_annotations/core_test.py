@@ -5,7 +5,12 @@ import httpx
 import pytest
 from freezegun import freeze_time
 
-from slack_annotations.core import SEARCH_HOURS, _get_search_after, notify
+from slack_annotations.core import (
+    SEARCH_HOURS,
+    _get_search_after,
+    _make_search_params,
+    notify,
+)
 
 
 class TestGetSearchAfter:
@@ -80,6 +85,18 @@ class TestNotify:
         )
 
         assert notify(token=token) == json.dumps(slack_annotations)
+
+
+@freeze_time("2024-12-01T01:00:00+00:00")
+def test_make_search_params():
+    limit = 10
+    params = {"limit": limit}
+    assert _make_search_params(params) == {
+        "sort": "created",
+        "order": "asc",
+        "search_after": "2024-12-01T00:00:00+00:00",
+        "limit": limit,
+    }
 
 
 @pytest.fixture

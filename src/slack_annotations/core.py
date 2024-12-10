@@ -26,17 +26,16 @@ def notify(
 def _make_search_params(
     params: dict[str, Any] | None = None, cache_path: str | None = None
 ) -> dict[str, Any]:
-    params = params or {}
     # Deliberately override any given sort or order param as these specific
     # values are needed for the algorithm below to work.
-    params.update(
-        {
-            "sort": "created",
-            "order": "asc",
-            "search_after": _get_search_after(cache_path),
-        }
-    )
-    return params
+    new_params = {
+        "sort": "created",
+        "order": "asc",
+        "search_after": _get_search_after(cache_path),
+    }
+    if params:
+        new_params.update(params)
+    return new_params
 
 
 def _make_headers(token: str | None = None) -> dict[str, str]:
