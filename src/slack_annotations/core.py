@@ -44,7 +44,9 @@ def _make_headers(token: str | None = None) -> dict[str, str]:
 
 
 def _get_search_after(cache_path: str | None = None) -> str:
+    """Return the search_after value from the cache file or the default."""
     default = (datetime.now(UTC) - timedelta(hours=SEARCH_HOURS)).isoformat()
+
     if not cache_path:
         return default
 
@@ -59,6 +61,7 @@ def _get_search_after(cache_path: str | None = None) -> str:
 def _maybe_update_cache(
     annotations: list[dict[str, Any]], cache_path: str | None = None
 ) -> None:
+    """Update the cache file with created timestamp of the last annotation."""
     if not annotations or not cache_path:
         return
 
