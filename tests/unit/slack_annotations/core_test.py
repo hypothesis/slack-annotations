@@ -16,6 +16,7 @@ from slack_annotations.core import (
 class TestGetSearchAfter:
     @freeze_time("2024-12-01T01:00:00+00:00")
     def test_without_cache(self):
+        # If there's no cached search_after time it returns one hour before now.
         assert _get_search_after() == "2024-12-01T00:00:00+00:00"
 
     @freeze_time("2024-12-01T01:00:00+00:00")
