@@ -1,5 +1,5 @@
-import json
 import html
+import json
 from typing import Any
 
 MAX_TEXT_LENGTH = 2000
