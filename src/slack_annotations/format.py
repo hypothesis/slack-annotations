@@ -37,7 +37,7 @@ def _trim_text(text: str) -> str:
 
 
 def _get_text(annotation: dict[str, Any]) -> str:
-    text = annotation.get("text", None)
+    text = annotation.get("text")
     if not text:
         text = NONE_TEXT
     return _trim_text(text)
