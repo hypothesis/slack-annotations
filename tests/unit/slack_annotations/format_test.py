@@ -30,12 +30,15 @@ class TestGetQuote:
         assert _get_quote(annotation) == exact
 
 
-class TestSanitizeTitle:
+class TestNormalizeTitle:
     def test_newline(self):
         assert normalize_title("sign \n up") == "sign up"
 
     def test_angle_bracket(self):
         assert normalize_title("sign < up") == "sign &lt; up"
+
+    def test_quote(self):
+        assert normalize_title('sign " up') == 'sign " up'
 
 
 def test_trim_long_text():
