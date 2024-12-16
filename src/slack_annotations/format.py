@@ -40,7 +40,7 @@ def _get_text(annotation: dict[str, Any]) -> str:
     text = annotation.get("text", None)
     if not text:
         text = NONE_TEXT
-    return html.escape(_trim_text(text))
+    return _trim_text(html.escape(text))
 
 
 def format_annotations(annotations: list[dict[str, Any]]) -> str:
