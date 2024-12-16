@@ -6,7 +6,7 @@ from slack_annotations.format import (
     _get_quote,
     _trim_text,
     format_annotations,
-    sanitize_title,
+    normalize_title,
 )
 
 
@@ -32,10 +32,10 @@ class TestGetQuote:
 
 class TestSanitizeTitle:
     def test_newline(self):
-        assert sanitize_title("sign \n up") == "sign up"
+        assert normalize_title("sign \n up") == "sign up"
 
     def test_angle_bracket(self):
-        assert sanitize_title("sign < up") == "sign &lt; up"
+        assert normalize_title("sign < up") == "sign &lt; up"
 
 
 def test_trim_long_text():
