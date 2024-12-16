@@ -1,8 +1,14 @@
 import json
+import html
 from typing import Any
 
 MAX_TEXT_LENGTH = 2000
 NONE_TEXT = "(None)"
+
+
+def sanitize_title(text: str) -> str:
+    text = html.escape(text)
+    return " ".join(text.split())
 
 
 def _format_annotation(annotation: dict[str, Any]) -> dict[str, Any]:
@@ -75,7 +81,7 @@ def _build_annotation_summary(annotation: dict[str, Any]) -> str:
     except Exception:  # pylint:disable=broad-exception-caught
         title = None
     if title:
-        document_link = f"<{uri}|{title}>"
+        document_link = f"<{uri}|{sanitize_title(title)}>"
     else:
         document_link = uri
 
