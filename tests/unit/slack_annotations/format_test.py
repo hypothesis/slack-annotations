@@ -38,7 +38,7 @@ class TestNormalizeTitle:
         assert normalize_title("sign < up") == "sign &lt; up"
 
     def test_quote(self):
-        assert normalize_title('sign " up') == 'sign " up'
+        assert normalize_title('sign " up') == "sign &quot; up"
 
 
 def test_trim_long_text():
