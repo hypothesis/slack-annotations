@@ -1,8 +1,14 @@
+import html
 import json
 from typing import Any
 
 MAX_TEXT_LENGTH = 2000
 NONE_TEXT = "(None)"
+
+
+def normalize_title(text: str) -> str:
+    text = html.escape(text)
+    return " ".join(text.split())
 
 
 def _format_annotation(annotation: dict[str, Any]) -> dict[str, Any]:
@@ -31,7 +37,7 @@ def _trim_text(text: str) -> str:
 
 
 def _get_text(annotation: dict[str, Any]) -> str:
-    text = annotation.get("text", None)
+    text = annotation.get("text")
     if not text:
         text = NONE_TEXT
     return _trim_text(text)
@@ -66,12 +72,12 @@ def format_annotations(annotations: list[dict[str, Any]]) -> str:
 
 
 def _build_annotation_summary(annotation: dict[str, Any]) -> str:
-    username = annotation["user"].split(":")[1].split("@")[0]
-    display_name = annotation["user_info"]["display_name"]
+    username = html.escape(annotation["user"].split(":")[1].split("@")[0])
+    display_name = html.escape(annotation["user_info"]["display_name"] or "")
     uri = annotation["uri"]
 
     try:
-        title = annotation["document"]["title"][0]
+        title = normalize_title(annotation["document"]["title"][0])
     except Exception:  # pylint:disable=broad-exception-caught
         title = None
     if title:

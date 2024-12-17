@@ -6,6 +6,7 @@ from slack_annotations.format import (
     _get_quote,
     _trim_text,
     format_annotations,
+    normalize_title,
 )
 
 
@@ -27,6 +28,17 @@ class TestGetQuote:
         annotation = {"target": [{"selector": [{}, {"exact": exact}]}]}
 
         assert _get_quote(annotation) == exact
+
+
+class TestNormalizeTitle:
+    def test_newline(self):
+        assert normalize_title("sign \n up") == "sign up"
+
+    def test_angle_bracket(self):
+        assert normalize_title("sign < up") == "sign &lt; up"
+
+    def test_quote(self):
+        assert normalize_title('sign " up') == "sign &quot; up"
 
 
 def test_trim_long_text():
@@ -139,6 +151,30 @@ class TestFormatAnnotation:
                 {
                     "type": "mrkdwn",
                     "text": "*Reply* (<https://hyp.is/test_annotation_id_1/example.com/|in-context link>):",
+                },
+                {"type": "plain_text", "text": "(None)"},
+            ],
+        }
+
+    def test_newline(self):
+        annotation = {
+            "user": "acct:test_user_1@hypothes.is",
+            "uri": "https://example.com/",
+            "links": {"incontext": "https://hyp.is/test_annotation_id_1/example.com/"},
+            "document": {"title": ["Annotation \n title"]},
+            "user_info": {"display_name": None},
+        }
+
+        assert _format_annotation(annotation) == {
+            "type": "section",
+            "text": {
+                "type": "mrkdwn",
+                "text": "`test_user_1` annotated <https://example.com/|Annotation title>:",
+            },
+            "fields": [
+                {
+                    "type": "mrkdwn",
+                    "text": "*Page Note* (<https://hyp.is/test_annotation_id_1/example.com/|in-context link>):",
                 },
                 {"type": "plain_text", "text": "(None)"},
             ],
