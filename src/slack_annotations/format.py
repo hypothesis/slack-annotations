@@ -7,7 +7,7 @@ NONE_TEXT = "(None)"
 
 
 def normalize_title(text: str) -> str:
-    text = html.escape(text, quote=False)
+    text = html.escape(text)
     return " ".join(text.split())
 
 
@@ -72,10 +72,8 @@ def format_annotations(annotations: list[dict[str, Any]]) -> str:
 
 
 def _build_annotation_summary(annotation: dict[str, Any]) -> str:
-    username = html.escape(annotation["user"].split(":")[1].split("@")[0], quote=False)
-    display_name = html.escape(
-        annotation["user_info"]["display_name"] or "", quote=False
-    )
+    username = html.escape(annotation["user"].split(":")[1].split("@")[0])
+    display_name = html.escape(annotation["user_info"]["display_name"] or "")
     uri = annotation["uri"]
 
     try:
