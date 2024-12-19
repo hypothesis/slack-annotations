@@ -26,7 +26,9 @@ def test_default(capsys, notify):
 
     cli([])
 
-    notify.assert_called_once_with(None, None, None)
+    notify.assert_called_once_with(
+        search_params=None, token=None, cache_path=None, group_name=None
+    )
     assert capsys.readouterr().out.strip() == notify.return_value
 
 
@@ -36,7 +38,9 @@ def test_search_params(capsys, notify):
     search_params = {"some_key": "some_value"}
     cli(["--search-params", json.dumps(search_params)])
 
-    notify.assert_called_once_with(search_params, None, None)
+    notify.assert_called_once_with(
+        search_params=search_params, token=None, cache_path=None, group_name=None
+    )
     assert capsys.readouterr().out.strip() == notify.return_value
 
 

@@ -16,6 +16,7 @@ def cli(argv=None):
     parser.add_argument("--search-params")
     parser.add_argument("--token")
     parser.add_argument("--cache-path")
+    parser.add_argument("--group-name")
 
     args = parser.parse_args(argv)
 
@@ -24,4 +25,10 @@ def cli(argv=None):
     else:
         search_params = None
 
-    print(notify(search_params, args.token, args.cache_path))
+    annotations = notify(
+        search_params=search_params,
+        token=args.token,
+        cache_path=args.cache_path,
+        group_name=args.group_name,
+    )
+    print(json.dumps(annotations) if annotations else "")

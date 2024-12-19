@@ -11,8 +11,10 @@ def normalize_title(text: str) -> str:
     return " ".join(text.split())
 
 
-def _format_annotation(annotation: dict[str, Any]) -> dict[str, Any]:
-    summary = _build_annotation_summary(annotation)
+def _format_annotation(
+    annotation: dict[str, Any], group_name: str | None = None
+) -> dict[str, Any]:
+    summary = _build_annotation_summary(annotation, group_name)
     fields = _build_annotation_fields(annotation)
     return {
         "type": "section",
@@ -43,7 +45,9 @@ def _get_text(annotation: dict[str, Any]) -> str:
     return _trim_text(text)
 
 
-def format_annotations(annotations: list[dict[str, Any]]) -> str:
+def format_annotations(
+    annotations: list[dict[str, Any]], group_name: str | None = None
+) -> str:
     if not annotations:
         return ""
 
@@ -54,7 +58,7 @@ def format_annotations(annotations: list[dict[str, Any]]) -> str:
     )
     blocks = []
     for annotation in annotations:
-        blocks.append(_format_annotation(annotation))
+        blocks.append(_format_annotation(annotation, group_name))
         blocks.append({"type": "divider"})
     blocks.append(
         {
@@ -71,7 +75,9 @@ def format_annotations(annotations: list[dict[str, Any]]) -> str:
     return json.dumps({"text": summary, "blocks": blocks})
 
 
-def _build_annotation_summary(annotation: dict[str, Any]) -> str:
+def _build_annotation_summary(
+    annotation: dict[str, Any], group_name: str | None = None
+) -> str:
     username = html.escape(annotation["user"].split(":")[1].split("@")[0])
     display_name = html.escape(annotation["user_info"]["display_name"] or "")
     uri = annotation["uri"]
@@ -85,9 +91,11 @@ def _build_annotation_summary(annotation: dict[str, Any]) -> str:
     else:
         document_link = uri
 
-    if display_name:
-        return f"`{username}` ({display_name}) annotated {document_link}:"
-    return f"`{username}` annotated {document_link}:"
+    formatted_user = (
+        f"`{username}` ({display_name})" if display_name else f"`{username}`"
+    )
+    formatted_group = f" in `{group_name}`" if group_name else ""
+    return f"{formatted_user} annotated {document_link}{formatted_group}:"
 
 
 def _build_annotation_fields(annotation: dict[str, Any]) -> list[dict[str, Any]]:
