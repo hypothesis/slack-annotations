@@ -1,5 +1,4 @@
 import html
-import json
 from typing import Any
 
 MAX_TEXT_LENGTH = 2000
@@ -47,9 +46,9 @@ def _get_text(annotation: dict[str, Any]) -> str:
 
 def format_annotations(
     annotations: list[dict[str, Any]], group_name: str | None = None
-) -> str:
+) -> dict[str, Any]:
     if not annotations:
-        return ""
+        return {}
 
     summary = (
         f"{len(annotations)} new annotations"
@@ -72,7 +71,7 @@ def format_annotations(
         }
     )
 
-    return json.dumps({"text": summary, "blocks": blocks})
+    return {"text": summary, "blocks": blocks}
 
 
 def _build_annotation_summary(

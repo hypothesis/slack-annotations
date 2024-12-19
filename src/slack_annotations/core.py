@@ -14,7 +14,7 @@ def notify(
     token: str | None = None,
     cache_path: str | None = None,
     group_name: str | None = None,
-) -> str:
+) -> dict[str, Any]:
     search_params = _make_search_params(search_params, cache_path)
     headers = _make_headers(token)
 

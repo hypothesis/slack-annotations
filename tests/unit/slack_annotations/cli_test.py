@@ -29,7 +29,7 @@ def test_default(capsys, notify):
     notify.assert_called_once_with(
         search_params=None, token=None, cache_path=None, group_name=None
     )
-    assert capsys.readouterr().out.strip() == notify.return_value
+    assert capsys.readouterr().out.strip() == json.dumps(notify.return_value)
 
 
 def test_search_params(capsys, notify):
@@ -41,7 +41,7 @@ def test_search_params(capsys, notify):
     notify.assert_called_once_with(
         search_params=search_params, token=None, cache_path=None, group_name=None
     )
-    assert capsys.readouterr().out.strip() == notify.return_value
+    assert capsys.readouterr().out.strip() == json.dumps(notify.return_value)
 
 
 @pytest.fixture(autouse=True)
