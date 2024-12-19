@@ -13,14 +13,15 @@ def notify(
     search_params: dict[str, Any] | None = None,
     token: str | None = None,
     cache_path: str | None = None,
-) -> str:
+    group_name: str | None = None,
+) -> dict[str, Any]:
     search_params = _make_search_params(search_params, cache_path)
     headers = _make_headers(token)
 
     annotations = _fetch_annotations(search_params, headers)
 
     _maybe_update_cache(annotations, cache_path)
-    return format_annotations(annotations)
+    return format_annotations(annotations, group_name)
 
 
 def _make_search_params(

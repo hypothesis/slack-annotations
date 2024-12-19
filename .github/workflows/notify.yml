@@ -8,6 +8,9 @@ on:
       slack_channel_id:
         required: true
         type: string
+      group_name:
+        required: false
+        type: string
     secrets:
       SEARCH_PARAMS:
         required: false
@@ -43,7 +46,8 @@ jobs:
             slack-annotations \
               --search-params '${{ secrets.SEARCH_PARAMS }}' \
               --token '${{ secrets.HYPOTHESIS_API_TOKEN }}' \
-              --cache-path ~/.cache.json
+              --cache-path ~/.cache.json \
+              --group-name '${{ inputs.GROUP_NAME }}'
             echo EOF
           } >> "$GITHUB_OUTPUT"
       - name: Post to Slack

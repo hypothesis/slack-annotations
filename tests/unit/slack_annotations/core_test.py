@@ -46,7 +46,7 @@ class TestNotify:
             content=json.dumps(search_annotations),
         )
 
-        assert notify() == json.dumps(slack_annotations)
+        assert notify() == slack_annotations
 
     @freeze_time("2024-12-01T01:00:00+00:00")
     def test_with_search_after_from_cache_file(
@@ -65,7 +65,7 @@ class TestNotify:
         cache_path = tmp_path / "cache.json"
         cache_path.write_text(json.dumps({"search_after": search_after}))
 
-        assert notify(cache_path=str(cache_path)) == json.dumps(slack_annotations)
+        assert notify(cache_path=str(cache_path)) == slack_annotations
         assert json.loads(cache_path.read_text()) == {
             "search_after": "2024-12-03T18:40:42.325652+00:00"
         }
@@ -85,7 +85,7 @@ class TestNotify:
             match_headers={"Authorization": f"Bearer {token}"},
         )
 
-        assert notify(token=token) == json.dumps(slack_annotations)
+        assert notify(token=token) == slack_annotations
 
 
 @freeze_time("2024-12-01T01:00:00+00:00")

@@ -179,3 +179,26 @@ class TestFormatAnnotation:
                 {"type": "plain_text", "text": "(None)"},
             ],
         }
+
+    def test_with_group_name(self):
+        annotation = {
+            "user": "acct:test_user_1@hypothes.is",
+            "uri": "https://example.com/",
+            "links": {"incontext": "https://hyp.is/test_annotation_id_1/example.com/"},
+            "user_info": {"display_name": None},
+        }
+
+        assert _format_annotation(annotation, group_name="Test group") == {
+            "type": "section",
+            "text": {
+                "type": "mrkdwn",
+                "text": "`test_user_1` annotated https://example.com/ in `Test group`:",
+            },
+            "fields": [
+                {
+                    "type": "mrkdwn",
+                    "text": "*Page Note* (<https://hyp.is/test_annotation_id_1/example.com/|in-context link>):",
+                },
+                {"type": "plain_text", "text": "(None)"},
+            ],
+        }

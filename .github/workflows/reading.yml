@@ -1,0 +1,22 @@
+name: reading
+concurrency:
+  group: reading
+on:
+  schedule:
+    - cron: '* * * * *'
+  workflow_dispatch:
+jobs:
+  Notify:
+    uses: ./.github/workflows/notify.yml
+    with:
+      cache_key: reading
+      slack_channel_id: ${{ vars.READING_SLACK_CHANNEL_ID }}
+      group_name: ${{ vars.READING_GROUP_NAME }}
+    secrets:
+      SEARCH_PARAMS: ${{ vars.READING_SEARCH_PARAMS }}
+      SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+  Snitch:
+    needs: Notify
+    runs-on: ubuntu-latest
+    steps:
+      - run: curl https://nosnch.in/${{ secrets.READING_SNITCH_ID }}
