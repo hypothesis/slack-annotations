@@ -19,4 +19,3 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - run: curl https://nosnch.in/${{ secrets.PR_WEBSITE_SNITCH_ID }}
-
