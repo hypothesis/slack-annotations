@@ -13,7 +13,8 @@ jobs:
       slack_channel_id: ${{ vars.SUPPORT_KB_SLACK_CHANNEL_ID }}
       group_name: ${{ vars.SUPPORT_KB_GROUP_NAME }}
     secrets:
-      SEARCH_PARAMS: ${{ vars.SUPPORT_KB_SEARCH_PARAMS }}
+      SEARCH_PARAMS: ${{ secrets.SUPPORT_KB_SEARCH_PARAMS }}
+      HYPOTHESIS_API_TOKEN: ${{ secrets.HYPOTHESIS_API_TOKEN }}
       SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
   Snitch:
     needs: Notify
