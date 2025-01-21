@@ -2,6 +2,29 @@
 requires = ["setuptools>=45", "setuptools_scm[toml]>=6.2"]
 build-backend = "setuptools.build_meta"
 
+[project]
+dynamic = ["version"]
+name = "slack-annotations"
+description = "Post annotations to Slack."
+readme = "README.md"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: BSD License",
+    "Intended Audience :: Developers",
+]
+requires-python = ">=3.11"
+dependencies = [
+    "httpx",
+]
+
+[project.urls]
+Repository = "https://github.com/hypothesis/slack-annotations"
+Issues = "https://github.com/hypothesis/slack-annotations/issues"
+Changelog = "https://github.com/hypothesis/slack-annotations/releases"
+
+[project.scripts]
+slack-annotations = "slack_annotations.cli:cli"
+
 [tool.setuptools_scm]
 
 [tool.pytest.ini_options]
