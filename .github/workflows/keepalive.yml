@@ -15,7 +15,7 @@
 name: Keepalive
 on:
   workflow_run:
-    workflows: [CI, eng-annotations, pr-website]
+    workflows: [CI, eng-annotations, pr-website, reading, support-kb]
     types: [completed]
     branches: [main]
 jobs:
