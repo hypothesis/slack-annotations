@@ -3,7 +3,7 @@ concurrency:
   group: pr-website
 on:
   schedule:
-    - cron: '* * * * *'
+    - cron: '*/15 * * * *'
   workflow_dispatch:
 jobs:
   Notify:
